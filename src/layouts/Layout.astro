@@ -1,23 +1,146 @@
+---
+import "../styles/global.css";
+import Header from "../components/layout/Header.astro";
+import Footer from "../components/layout/Footer.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+  /**
+   * Hide header/footer (e.g. for component preview pages or special layouts).
+   */
+  bare?: boolean;
+}
+
+const {
+  title = "Ditto — Voice to text, everywhere you type.",
+  description = "Local voice-to-text for Windows. Press a shortcut, speak, and Ditto types into whatever app you're using. 100% local, no account, no cloud.",
+  bare = false,
+} = Astro.props;
+---
+
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
-</html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
+    <!-- Caveat: cursive labels in How-it-works connectors (CLAUDE.md §5.5) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&display=swap" rel="stylesheet" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <!-- Open Graph (placeholder — domain TBD per CLAUDE.md §8) -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+  </head>
+  <body>
+    {!bare && <Header />}
+    <slot />
+    {!bare && <Footer />}
+
+    <!--
+      GitHub release & stars fetcher.
+      Hydrates: .js-release-version, .js-release-size, .js-release-link[href],
+                .js-release-sha, .js-gh-stars
+      Cached 1h in localStorage. Falls back silently to hardcoded values.
+    -->
+    <script>
+      (async function fetchLatestRelease() {
+        const REPO = "asantinos/ditto";
+        const CACHE_KEY = "ditto:gh-release";
+        const CACHE_VERSION = 2;
+        const TTL_MS = 60 * 60 * 1000;
+
+        function fmtSize(bytes: number | null | undefined): string | null {
+          if (!bytes) return null;
+          const mb = bytes / (1024 * 1024);
+          return mb >= 1000 ? (mb / 1024).toFixed(2) + " GB" : Math.round(mb) + " MB";
+        }
+        function fmtStars(n: number | null | undefined): string | null {
+          if (n == null) return null;
+          if (n < 1000) return String(n);
+          if (n < 10000) return (n / 1000).toFixed(1).replace(/\.0$/, "") + "k";
+          return Math.round(n / 1000) + "k";
+        }
+
+        type ReleaseData = {
+          version?: string;
+          size?: string;
+          url?: string;
+          sha?: string;
+          stars?: string;
+        };
+
+        function apply(data: ReleaseData) {
+          if (!data) return;
+          const { version, size, url, sha, stars } = data;
+          if (version) document.querySelectorAll(".js-release-version").forEach((el) => (el.textContent = version));
+          if (size) document.querySelectorAll(".js-release-size").forEach((el) => (el.textContent = size));
+          if (url)
+            document.querySelectorAll<HTMLAnchorElement>(".js-release-link").forEach((el) => {
+              el.setAttribute("href", url);
+              el.setAttribute("download", "");
+            });
+          if (sha) document.querySelectorAll(".js-release-sha").forEach((el) => (el.textContent = sha));
+          if (stars) document.querySelectorAll(".js-gh-stars").forEach((el) => (el.textContent = stars));
+        }
+
+        try {
+          const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
+          if (cached && cached.v === CACHE_VERSION && Date.now() - cached.t < TTL_MS) {
+            apply(cached.data);
+            return;
+          }
+        } catch {}
+
+        try {
+          const headers = { Accept: "application/vnd.github+json" };
+          const [releaseRes, repoRes] = await Promise.all([
+            fetch(`https://api.github.com/repos/${REPO}/releases/latest`, { headers }),
+            fetch(`https://api.github.com/repos/${REPO}`, { headers }),
+          ]);
+
+          const data: ReleaseData = {};
+
+          if (releaseRes.ok) {
+            const release = await releaseRes.json();
+            const installer = (release.assets || []).find((a: { name: string }) =>
+              a.name.toLowerCase().endsWith(".exe"),
+            );
+            if (installer) {
+              data.version = release.tag_name;
+              data.size = fmtSize(installer.size) ?? undefined;
+              data.url = installer.browser_download_url;
+              if (installer.digest && installer.digest.startsWith("sha256:")) {
+                data.sha = installer.digest.slice(7);
+              }
+            }
+          }
+
+          if (repoRes.ok) {
+            const repo = await repoRes.json();
+            data.stars = fmtStars(repo.stargazers_count) ?? undefined;
+          }
+
+          if (Object.keys(data).length === 0) throw new Error("Empty response");
+
+          apply(data);
+          localStorage.setItem(CACHE_KEY, JSON.stringify({ v: CACHE_VERSION, t: Date.now(), data }));
+        } catch (e) {
+          console.warn("[ditto] Could not fetch GitHub data:", e);
+        }
+      })();
+    </script>
+  </body>
+</html>
