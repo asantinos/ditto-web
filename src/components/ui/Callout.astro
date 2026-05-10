@@ -1,0 +1,61 @@
+---
+/**
+ * Inline note/tip/warning block for docs MDX content.
+ *
+ * Usage in MDX:
+ *   import Callout from '../../components/ui/Callout.astro'
+ *   <Callout type="note">Body text...</Callout>
+ *
+ * The 'type' prop controls the prefix label and accent. Default is "note".
+ */
+
+interface Props {
+  type?: "note" | "tip" | "warning";
+}
+
+const { type = "note" } = Astro.props;
+
+const labels = {
+  note: "Note",
+  tip: "Tip",
+  warning: "Warning",
+} as const;
+---
+
+<aside class:list={["docs-callout", `docs-callout-${type}`]}>
+  <strong>{labels[type]}:</strong>{" "}
+  <slot />
+</aside>
+
+<style>
+  .docs-callout {
+    background: var(--color-info-soft);
+    border: 0.5px solid rgba(0, 102, 204, 0.2);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin: 24px 0;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .docs-callout strong {
+    color: var(--color-info);
+  }
+
+  /* Tip — green accent */
+  .docs-callout-tip {
+    background: rgba(52, 199, 89, 0.06);
+    border-color: rgba(52, 199, 89, 0.25);
+  }
+  .docs-callout-tip strong {
+    color: #1a8c3e;
+  }
+
+  /* Warning — amber accent */
+  .docs-callout-warning {
+    background: rgba(255, 149, 0, 0.06);
+    border-color: rgba(255, 149, 0, 0.25);
+  }
+  .docs-callout-warning strong {
+    color: #b56a00;
+  }
+</style>

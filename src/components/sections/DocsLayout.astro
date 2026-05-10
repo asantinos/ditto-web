@@ -1,0 +1,257 @@
+---
+/**
+ * Wraps a doc page: 2-column layout (sidebar + content) with a
+ * breadcrumb above the title and the rendered MDX body in a styled
+ * .docs-content article.
+ *
+ * The `<style>` block below is the typography for everything inside
+ * MDX bodies. Markdown renders to plain HTML elements (h1, h2, p, ul,
+ * ol, code, kbd, table, blockquote, a) and we style them globally for
+ * the .docs-content scope.
+ */
+import type { CollectionEntry } from "astro:content";
+import DocsSidebar from "./DocsSidebar.astro";
+
+interface Props {
+  doc: CollectionEntry<"docs">;
+  /** All docs, passed through to the sidebar for nav rendering. */
+  allDocs: CollectionEntry<"docs">[];
+}
+
+const { doc, allDocs } = Astro.props;
+const { title, subtitle, section } = doc.data;
+---
+
+<div class="docs-layout">
+  <DocsSidebar docs={allDocs} activeSlug={doc.id} />
+
+  <article class="docs-content">
+    <div class="docs-breadcrumb">
+      Docs / {section} / <span class="docs-breadcrumb-current">{title}</span>
+    </div>
+
+    <h1>{title}</h1>
+    <p class="docs-lede">{subtitle}</p>
+
+    <slot />
+
+    <div class="docs-edit">
+      <a
+        href={`https://github.com/asantinos/ditto/edit/main/src/content/docs/${doc.id}.mdx`}
+        target="_blank"
+        rel="noopener"
+      >
+        Edit this page on GitHub →
+      </a>
+    </div>
+  </article>
+</div>
+
+<style>
+  .docs-layout {
+    max-width: 1280px;
+    margin: 40px auto 80px;
+    padding: 0 32px;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 48px;
+  }
+  .docs-content {
+    max-width: 720px;
+  }
+  .docs-breadcrumb {
+    font-size: 12px;
+    color: var(--color-text-tertiary);
+    margin-bottom: 16px;
+  }
+  .docs-breadcrumb-current {
+    color: var(--color-text);
+  }
+
+  /* Body typography (markdown → HTML rendered inside .docs-content) */
+  .docs-content :global(h1) {
+    font-size: 36px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    margin-bottom: 12px;
+  }
+  .docs-content :global(.docs-lede) {
+    font-size: 18px;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin-bottom: 40px;
+  }
+  .docs-content :global(h2) {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-top: 48px;
+    margin-bottom: 16px;
+    padding-top: 24px;
+    border-top: 0.5px solid var(--color-border);
+  }
+  .docs-content :global(h2:first-of-type) {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+  }
+  .docs-content :global(h3) {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.012em;
+    margin-top: 28px;
+    margin-bottom: 8px;
+    color: var(--color-text);
+  }
+  .docs-content :global(p) {
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+  .docs-content :global(ol),
+  .docs-content :global(ul) {
+    padding-left: 24px;
+    margin-bottom: 20px;
+  }
+  .docs-content :global(li) {
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: 6px;
+  }
+
+  /* Inline links inside the body */
+  .docs-content :global(p a),
+  .docs-content :global(li a),
+  .docs-content :global(td a) {
+    color: var(--color-text);
+    text-decoration: underline;
+    text-decoration-color: var(--color-border-strong);
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    transition: text-decoration-color 150ms ease-out;
+  }
+  .docs-content :global(p a:hover),
+  .docs-content :global(li a:hover),
+  .docs-content :global(td a:hover) {
+    text-decoration-color: var(--color-text);
+  }
+
+  /* Inline code */
+  .docs-content :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+    background: var(--color-surface-alt);
+    padding: 1.5px 6px;
+    border-radius: 5px;
+    border: 0.5px solid var(--color-border);
+  }
+
+  /* kbd — physical-key look */
+  .docs-content :global(kbd) {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    background: linear-gradient(180deg, #ffffff, #f0f0f2);
+    border: 0.5px solid var(--color-border-strong);
+    border-radius: 5px;
+    padding: 2px 7px;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 1),
+      0 1px 0 rgba(0, 0, 0, 0.06);
+    color: var(--color-text);
+  }
+
+  /* Pre/code blocks */
+  .docs-content :global(pre) {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    background: var(--color-surface-alt);
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin: 20px 0;
+    overflow-x: auto;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+  }
+  .docs-content :global(pre code) {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+    color: inherit;
+  }
+
+  /* Tables */
+  .docs-content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+    background: var(--color-surface);
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+  .docs-content :global(thead) {
+    background: var(--color-surface-alt);
+  }
+  .docs-content :global(th) {
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--color-text-tertiary);
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    border-bottom: 0.5px solid var(--color-border);
+  }
+  .docs-content :global(td) {
+    padding: 11px 14px;
+    border-bottom: 0.5px solid var(--color-border);
+    line-height: 1.5;
+  }
+  .docs-content :global(tbody tr:last-child td) {
+    border-bottom: none;
+  }
+
+  /* Edit on GitHub footer */
+  .docs-edit {
+    margin-top: 60px;
+    padding-top: 24px;
+    border-top: 0.5px solid var(--color-border);
+    font-size: 13px;
+    color: var(--color-text-tertiary);
+  }
+  .docs-edit a {
+    color: var(--color-text);
+    text-decoration: underline;
+    text-decoration-color: var(--color-border-strong);
+    text-underline-offset: 3px;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .docs-layout { padding: 0 24px; }
+  }
+  @media (max-width: 900px) {
+    .docs-layout {
+      grid-template-columns: 1fr;
+      gap: 0;
+      margin-top: 0;
+    }
+  }
+  @media (max-width: 700px) {
+    .docs-layout {
+      padding: 0 24px;
+      gap: 24px;
+      margin: 0 auto 60px;
+    }
+    .docs-content { font-size: 15px; }
+    .docs-content :global(h1) {
+      font-size: clamp(28px, 7vw, 36px);
+    }
+  }
+  @media (max-width: 480px) {
+    .docs-layout { padding: 0 20px; }
+  }
+</style>

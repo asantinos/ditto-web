@@ -1,0 +1,71 @@
+---
+title: Languages
+subtitle: Ditto has two language settings — one for what you see, one for what you say. Here's how they relate.
+section: Features
+order: 6
+---
+
+import Callout from "../../components/ui/Callout.astro";
+
+## Two settings, one app
+
+There are two places "language" appears in Ditto:
+
+- **App language** (**Settings → General → Interface language**). Controls the text in menus, settings, the welcome window, the tray menu — everything Ditto draws on screen.
+- **Transcription language** (**Settings → Audio → Language**). Tells Whisper which language to expect when you speak.
+
+These are independent. You can have Ditto's UI in English and transcribe in Spanish, or UI in Japanese and transcribe in French. Pick whatever combination matches how you actually work.
+
+## App language
+
+**Settings → General → Interface language** offers nine options:
+
+- **Auto-detect** — Ditto reads your Windows language and uses it if it's one of the supported eight. Falls back to English if not.
+- **English**
+- **Español**
+- **Français**
+- **Deutsch**
+- **Italiano**
+- **Português**
+- **日本語** (Japanese)
+- **中文** (Chinese, Simplified)
+
+Changes apply immediately, no restart needed. The pill, settings, tray menu, and welcome window all update on the spot.
+
+<Callout type="note">
+"Auto-detect" reads your system language at app launch and on every settings change, so swapping between auto and a fixed language is safe — you won't get stuck mid-mismatch.
+</Callout>
+
+## Transcription language
+
+**Settings → Audio → Language** controls what Whisper expects to hear. Same nine options as the UI: auto-detect or one of the eight languages.
+
+For details on how this affects accuracy and latency, see the [Audio input page](/docs/audio-input). Quick summary:
+
+- **Auto-detect** is convenient if you switch languages, but adds latency and can occasionally pick wrong.
+- **A fixed language** is faster and more accurate when you only ever speak one.
+
+## Translate to English
+
+There's a third option that interacts with transcription language: **Settings → Audio → Translate to English**. When on, Whisper translates your speech into English regardless of which language you spoke.
+
+This is independent of the UI language. You can have a Spanish UI and still get English text out of every transcription.
+
+See the [Audio input page](/docs/audio-input) for use cases and caveats.
+
+## Why two settings?
+
+Practical reasons:
+
+- People speak and read in different languages. A native Spanish speaker using Ditto in English at work might want UI in Spanish but transcribe in English.
+- The model and the UI live in completely different parts of the app. Whisper.cpp doesn't care about Ditto's UI language; React doesn't care about Whisper's language hint. Keeping them separate avoids weird coupling.
+- It mirrors what apps like macOS, Windows, and Office do: separate display language from input/dictation language.
+
+## Adding more languages
+
+The eight current languages are the ones Whisper handles best at all model sizes and the ones with translated UI. Adding more requires:
+
+- Translating ~150 strings in the UI for each new language.
+- Confirming Whisper performs reasonably well at the model sizes Ditto ships.
+
+If you'd like to contribute a translation, the strings live as JSON files in the repo at `src/shared/locales/`. Open an issue or PR on [GitHub](https://github.com/asantinos/ditto) — every language file is about 200 keys.

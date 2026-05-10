@@ -1,0 +1,92 @@
+---
+title: Installation
+subtitle: What Ditto needs, how to install it, where it lives, and how to update or remove it.
+section: Getting Started
+order: 2
+---
+
+import Callout from "../../components/ui/Callout.astro";
+
+## Requirements
+
+- **OS:** Windows 10 or 11, 64-bit
+- **Disk:** ~600 MB for the app, plus space for the model you choose (75 MB to 2.9 GB depending on size)
+- **GPU (optional):** any recent NVIDIA card with up-to-date drivers. CUDA Toolkit is not required, the necessary runtime DLLs ship with Ditto.
+
+<Callout type="note">
+No NVIDIA GPU? Ditto still works on CPU. Transcription will be slower, especially with bigger models.
+</Callout>
+
+## Download
+
+Get `Ditto-Setup-1.0.0.exe` from the [download page](/download) or directly from [GitHub Releases](https://github.com/asantinos/ditto/releases/latest).
+
+The installer is around 400 MB. Most of that is the bundled CUDA runtime (cuBLAS, cuDNN). The Whisper model is downloaded separately on first launch.
+
+## Run the installer
+
+Double-click the `.exe`. The first time Windows will show a SmartScreen warning:
+
+<Callout type="warning">
+**Windows protected your PC** — Microsoft Defender SmartScreen prevented an unrecognized app from starting.
+</Callout>
+
+This is expected. Ditto is not yet signed with a code-signing certificate, which is common for open source apps shipping their first release. To continue:
+
+1. Click **More info**
+2. Click **Run anyway**
+
+The NSIS installer opens. By default Ditto installs to:
+
+`%LOCALAPPDATA%\Programs\Ditto\`
+
+You can change the location during install. The installer creates:
+
+- A Desktop shortcut
+- A Start Menu shortcut
+- An entry in **Apps & features**
+
+<Callout type="tip">
+Some antivirus tools flag unsigned Electron apps as a precaution. If yours does, allow the file or whitelist Ditto in your antivirus settings.
+</Callout>
+
+## Where things live
+
+After install, Ditto's files are in two places:
+
+| What | Path |
+|---|---|
+| Program files (binary, DLLs, app code) | `%LOCALAPPDATA%\Programs\Ditto\` |
+| User data folder (created on first launch) | `%APPDATA%\ditto\` |
+| Whisper models | `%APPDATA%\ditto\models\` |
+| Your settings | `%APPDATA%\ditto\config.json` |
+
+Program files are removed when you uninstall. **User data is not** — your settings and downloaded models stay until you delete them manually or use **Settings → Advanced → Delete all data**.
+
+## Update
+
+Ditto does not yet auto-update. To install a newer version:
+
+1. Download the new `Ditto-Setup-X.Y.Z.exe`
+2. Run it (you can keep the old version installed; the installer handles the upgrade)
+3. Your settings and downloaded models are preserved
+
+<Callout type="note">
+Auto-updates are planned for a future release.
+</Callout>
+
+## Uninstall
+
+Two ways:
+
+**From Windows:**
+
+1. Open **Settings → Apps → Installed apps**
+2. Find **Ditto**
+3. Click **⋯ → Uninstall**
+
+**From the install folder:**
+
+- Run `Uninstall Ditto.exe` inside `%LOCALAPPDATA%\Programs\Ditto\`
+
+Either way, the program files are removed. To also remove your downloaded models and settings, delete the folder `%APPDATA%\ditto\` manually.

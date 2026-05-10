@@ -1,0 +1,64 @@
+---
+title: First transcription
+subtitle: A walkthrough of dictating your first sentence, what each pill state means, and how to cancel or recover if something goes wrong.
+section: Getting Started
+order: 3
+---
+
+import Callout from "../../components/ui/Callout.astro";
+
+## Before you start
+
+Two things should be in place from the previous steps:
+
+- Ditto is installed and running. The pill is somewhere on screen, or hidden in the tray.
+- A Whisper model is downloaded. If you skipped the welcome window, open **Settings → Models** and pick one.
+
+<Callout type="tip">
+This walkthrough assumes the default shortcut <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd>. If you changed it, use yours.
+</Callout>
+
+## Dictating
+
+1. **Click into a text field.** Anywhere a cursor blinks works: a Slack message, a code editor, an email draft, a search bar. Ditto pastes wherever your cursor is when transcription finishes.
+2. **Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd>.** The pill switches to its recording state. On Matte and Onyx themes it shows voice-driven bars; on Aurora, Sunset, and Mint it shows a wave animation at the bottom that reacts to your voice.
+3. **Talk normally.** Speak at your usual pace. Pauses are fine, Whisper will handle them. Background noise is OK in moderation, especially with the noise filter on.
+4. **Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd> again.** The pill collapses to a small dots loader while Ditto runs the audio through the model.
+5. **Your text is pasted.** Within a second or two (longer for big models or long recordings), the transcription appears in the text field where your cursor was.
+
+## What each pill state looks like
+
+| State | What you see | Meaning |
+|---|---|---|
+| Idle | Wide pill that reads "Ditto" | Ready, waiting for the shortcut |
+| Recording | Voice-reactive bars or wave | Capturing audio |
+| Transcribing | Small pill with a row of animated dots | Running Whisper, generating text |
+| Copied | Short pill with a check icon and "Copied!" | Text is in your clipboard but auto-paste is off |
+
+The "Copied" state only appears if you turned off auto-paste in **Settings → General**. By default Ditto pastes the text for you.
+
+## Canceling a recording
+
+If you change your mind mid-sentence:
+
+- Press <kbd>Esc</kbd> while recording. The pill returns to idle and the audio is discarded. Nothing is sent to Whisper.
+
+The cancel shortcut is configurable in **Settings → Shortcut**, in case <kbd>Esc</kbd> clashes with something else for you.
+
+## If something goes wrong
+
+A few common situations:
+
+- **Nothing happens when you press the shortcut.** Another app may have registered the same combo. Open **Settings → Shortcut** and pick a different one, or check the [Shortcuts page](/docs/shortcuts) for details.
+- **The pill records but no text appears.** Check that the model file still exists. If you deleted it manually, Ditto reopens the welcome window so you can pick another. See [Models](/docs/models) for more.
+- **The text is wrong or in the wrong language.** Open **Settings → Audio** and set a specific transcription language instead of "Auto-detect". See [Audio input](/docs/audio-input) and [Languages](/docs/languages).
+- **The pill never reaches "Copied" and your app is empty.** Some apps (RDP sessions, certain games, sandboxed text fields) block simulated <kbd>Ctrl</kbd>+<kbd>V</kbd>. Turn on **Settings → General → Keep previous clipboard** if you'd rather paste manually.
+
+For broader issues, jump to [Troubleshooting](/docs/troubleshooting).
+
+## A few tips for better results
+
+- **Say punctuation.** Whisper picks up "comma", "period", "question mark" if you say them clearly. Doesn't always work but often enough to be useful.
+- **Don't whisper.** A normal speaking voice gives the model the most signal.
+- **Bigger isn't always better.** Base or Small are usually plenty for daily notes. Medium and Large-v3 shine for technical jargon, accents, or noisy environments — but they're slower.
+- **Pick a fixed language if you always speak the same one.** Auto-detect is flexible but adds latency. Setting it explicitly speeds things up and reduces mistakes.

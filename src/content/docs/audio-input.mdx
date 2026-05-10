@@ -1,0 +1,78 @@
+---
+title: Audio input
+subtitle: Picking your microphone, tuning the input level, filtering background noise, and setting the language Whisper transcribes.
+section: Features
+order: 4
+---
+
+import Callout from "../../components/ui/Callout.astro";
+
+## Choosing a microphone
+
+**Settings → Audio → Microphone** lists every input device Windows knows about. The default option is "System default" — whatever Windows currently has set as the default recording device. If you have several mics (built-in laptop mic, USB mic, headset, webcam), pick the one you want explicitly so Ditto doesn't switch when Windows reshuffles defaults.
+
+<Callout type="tip">
+The first time you pick a specific device, you may need to grant microphone access. Ditto requests it automatically — if the request was dismissed earlier, check **Windows → Privacy → Microphone** and make sure Ditto is allowed.
+</Callout>
+
+## Microphone gain
+
+Some mics record too quietly, some too hot. **Settings → Audio → Microphone gain** lets you scale the input volume in software:
+
+- **100%** — no change, default.
+- **Below 100%** — reduces volume. Useful if your mic is hot and clips on loud syllables.
+- **Above 100%** — amplifies. Useful for quiet mics, but going too high also amplifies background noise.
+
+The gain is applied in the renderer before audio gets sent to Whisper, so it directly affects how Whisper hears you. If your transcriptions are inconsistent, try moving the slider in 10% steps and re-record.
+
+<Callout type="note">
+Gain isn't a substitute for a properly placed mic. If your microphone is across the room, no amount of gain will fix it.
+</Callout>
+
+## Noise filter
+
+**Settings → Audio → Noise filter** turns on Chromium's built-in noise suppression. It runs in real time, before recording, on the audio track itself.
+
+It's good at removing **constant** background noise:
+
+- Fan noise (CPU, AC, small appliances)
+- Hum from electronics
+- Steady traffic in the distance
+
+It's less effective at sudden noises (door closing, dog barking, someone shouting). For those, recording quality + a fixed language hint to Whisper do more than the filter does.
+
+<Callout type="tip">
+Try Ditto first **without** the filter. Whisper itself is robust against moderate background noise. Turn the filter on only if you find transcriptions are getting tripped up by your room.
+</Callout>
+
+## Transcription language
+
+**Settings → Audio → Language** sets which language Whisper expects to hear. This is the **content** language — what you say into the mic — not the language of Ditto's UI. (UI language is a separate setting in **Settings → General**. See [Languages](/docs/languages) for the difference.)
+
+Two modes:
+
+- **Auto-detect** — Whisper tries to identify the language from the first few seconds of audio. Flexible if you switch languages, but slower and occasionally wrong.
+- **A specific language** — locks Whisper to that language. Faster, more accurate, but only works for that language.
+
+Ditto supports the same eight languages here as in the UI: English, Spanish, French, German, Italian, Portuguese, Japanese, Chinese.
+
+<Callout type="tip">
+If you only ever speak one language to Ditto, set it explicitly. The first transcription after each app launch is faster, the model is better grounded, and you avoid occasional misdetections (Whisper sometimes hears a word in the "wrong" language and switches mid-recording).
+</Callout>
+
+## Translate to English
+
+**Settings → Audio → Translate to English** changes Whisper's job. Instead of transcribing what you said literally, it **translates it to English** in one step.
+
+Some examples of what this means in practice:
+
+- You say "buenos días, ¿cómo estás?" — Ditto types "Good morning, how are you?".
+- You say "ich gehe ins Büro" — Ditto types "I'm going to the office".
+
+Use cases:
+
+- Drafting English emails or messages while thinking in your native language.
+- Quick captions or notes from foreign-language audio.
+- Mixed-language meetings where you want everything in English.
+
+This works best with **Medium** or **Large-v3** — translation is harder than transcription, and smaller models can produce stilted output.

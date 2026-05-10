@@ -1,0 +1,22 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import DocsLayout from "../../components/sections/DocsLayout.astro";
+
+export async function getStaticPaths() {
+  const docs = await getCollection("docs");
+  return docs.map((doc) => ({
+    params: { slug: doc.id },
+    props: { doc, allDocs: docs },
+  }));
+}
+
+const { doc, allDocs } = Astro.props;
+const { Content } = await render(doc);
+---
+
+<Layout title={`${doc.data.title} — Ditto Docs`}>
+  <DocsLayout doc={doc} allDocs={allDocs}>
+    <Content />
+  </DocsLayout>
+</Layout>

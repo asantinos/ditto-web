@@ -1,0 +1,71 @@
+---
+title: Shortcuts
+subtitle: The keyboard combos that drive Ditto, how to change them, and what to do when one clashes with another app.
+section: Features
+order: 1
+---
+
+import Callout from "../../components/ui/Callout.astro";
+
+## The default
+
+Out of the box Ditto uses two shortcuts:
+
+| Shortcut | What it does |
+|---|---|
+| <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd> | Start recording, then stop and transcribe |
+| <kbd>Esc</kbd> | Cancel the current recording without transcribing |
+
+The recording shortcut is **global** — it works from any app, not just when Ditto has focus. The cancel shortcut is **only active during a recording**; the rest of the time pressing <kbd>Esc</kbd> does nothing for Ditto.
+
+## How recording works
+
+There are two activation modes available in **Settings → Shortcut → Mode**:
+
+- **Toggle** (default): one press starts the recording, a second press ends it and triggers transcription.
+- **Push-to-talk**: hold the shortcut while you speak, release it to stop. Ditto detects release after ~600 ms of inactivity on the combo, so there's a small delay between letting go and the transcription starting.
+
+Pick whichever feels more natural for your workflow.
+
+## Change the recording shortcut
+
+1. Open Settings from the tray icon (right-click → "Settings", or double-click the tray icon).
+2. Go to the **Shortcut** panel.
+3. Under **Main shortcut → Record / stop**, click **Change**.
+4. Press the new combination. Ditto captures it and re-registers globally on the spot.
+
+The combo must include at least one modifier (<kbd>Ctrl</kbd>, <kbd>Shift</kbd>, <kbd>Alt</kbd>, or the Windows key) plus one regular key. Single-key shortcuts are not allowed for the main shortcut to avoid accidental triggers when typing.
+
+## Change the cancel shortcut
+
+The cancel shortcut works differently — single keys are allowed because it's only active during a recording, so there's no risk of typing collisions.
+
+1. Settings → Shortcut → **Cancel recording**.
+2. Click **Change**, press the new key (single keys allowed: <kbd>Esc</kbd>, <kbd>F1</kbd>–<kbd>F24</kbd>, etc.).
+
+<Callout type="tip">
+<kbd>Esc</kbd> is a sensible default. If something else in your workflow uses <kbd>Esc</kbd> heavily during dictation, swap it for an F-key.
+</Callout>
+
+## When the shortcut clashes
+
+Some combinations are claimed by other software. Common offenders:
+
+- Older versions of Microsoft Office reserved certain <kbd>Shift</kbd>+<kbd>Space</kbd> combos.
+- Discord, Steam, and game launchers register global hotkeys.
+- Screen recording tools, accessibility software, language switchers.
+
+If your chosen shortcut doesn't trigger Ditto, it's almost always a conflict. Try one of these patterns instead — they're rarely taken:
+
+- <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd>
+- <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>D</kbd>
+- <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>;</kbd>
+- <kbd>F8</kbd> with a modifier (<kbd>Ctrl</kbd>+<kbd>F8</kbd>, etc.)
+
+You can also test conflicts the brute-force way: with the new shortcut set, press it from outside Ditto. If something else reacts (a menu opens, a window flashes), there's a clash.
+
+## Tips
+
+- **Avoid keys you press often while writing.** A shortcut you trigger while typing leads to surprises.
+- **Pick a combo your fingers can hit one-handed.** Dictation is faster when the shortcut doesn't break your flow.
+- **If you switch keyboard layouts**, retest your shortcut. Layouts can re-map physical keys and the combo may move under your fingers.

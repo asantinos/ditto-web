@@ -1,0 +1,53 @@
+---
+title: Quick start
+subtitle: Install Ditto, pick a model, and you're transcribing in under three minutes.
+section: Getting Started
+order: 1
+---
+
+import Callout from "../../components/ui/Callout.astro";
+
+## 1. Install
+
+Download `Ditto-Setup-1.0.0.exe` from the [Download page](/download) and run it. Ditto installs to your user folder. No admin rights needed.
+
+<Callout type="note">
+Windows SmartScreen will show a warning the first time you run the installer. Click **More info → Run anyway**. The installer is not yet code-signed, which is normal for early open source builds.
+</Callout>
+
+## 2. Pick a model
+
+The first time Ditto launches, a Welcome window appears. Pick a Whisper model and Ditto downloads it from HuggingFace to your `%APPDATA%\ditto\models\` folder.
+
+| Model    | Size   | Speed   | Use case |
+| -------- | ------ | ------- | -------- |
+| Tiny     | 75 MB  | Fastest | Quick notes, lowest latency |
+| Base     | 142 MB | Fast    | Casual use, balanced |
+| Small    | 466 MB | Medium  | Daily use, better accuracy |
+| Medium   | 1.5 GB | Slower  | High accuracy, more CPU/GPU work |
+| Large-v3 | 2.9 GB | Slowest | Maximum quality |
+
+<Callout type="tip">
+Start with Base. You can switch to a larger one later from **Settings → Models** without reinstalling.
+</Callout>
+
+When the download finishes, the Welcome window closes itself and the floating pill appears on screen.
+
+## 3. Your first transcription
+
+1. Click into any text field — a chat, a browser tab, your code editor, anything.
+2. Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd>.
+3. Talk.
+4. Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd> again.
+
+A second or two later, your transcription is pasted where your cursor was.
+
+<Callout type="note">
+The pill shows what Ditto is doing: in idle it just reads "Ditto", while recording it animates with your voice (bars or a wave depending on the theme), and while transcribing it shows a small dot loader. If you don't see the pill, it may be hidden — open it from the tray icon, or just keep using the shortcut, it works either way.
+</Callout>
+
+## Next
+
+- [Customize your shortcut](/docs/shortcuts)
+- [Switch to a more accurate model](/docs/models)
+- [Adjust how the text is pasted](/docs/auto-paste)

@@ -29,4 +29,24 @@ const changelog = defineCollection({
   }),
 });
 
-export const collections = { changelog };
+/**
+ * DOCS — one .mdx file per page.
+ *
+ * Frontmatter holds metadata (title, subtitle, section, order); body
+ * holds the actual markdown content rendered by /docs/[slug].astro.
+ *
+ * 'section' groups pages in the sidebar; 'order' sorts them within a
+ * section. The slug comes from the filename (e.g. quick-start.mdx →
+ * /docs/quick-start).
+ */
+const docs = defineCollection({
+  loader: glob({ pattern: "**/*.mdx", base: "./src/content/docs" }),
+  schema: z.object({
+    title: z.string(),
+    subtitle: z.string(),
+    section: z.enum(["Getting Started", "Features", "Advanced"]),
+    order: z.number(),
+  }),
+});
+
+export const collections = { changelog, docs };

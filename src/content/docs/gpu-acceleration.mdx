@@ -1,0 +1,83 @@
+---
+title: GPU acceleration
+subtitle: How Ditto uses your NVIDIA GPU to speed up transcription, when to turn it off, and what to check if it isn't working.
+section: Advanced
+order: 1
+---
+
+import Callout from "../../components/ui/Callout.astro";
+
+## What it does
+
+Whisper.cpp can run on either CPU or GPU. On supported NVIDIA cards, GPU mode uses CUDA to push the heavy matrix math (attention layers, FFT, matmul) onto the graphics card. The result: 5x to 30x faster transcriptions depending on model size.
+
+The speedup is more dramatic on bigger models. Tiny barely benefits, since it's already near the limit of CPU IO overhead. Large-v3 can take 80 seconds on CPU and a few seconds on a recent GPU.
+
+## The toggle
+
+**Settings → Models → Use GPU (CUDA)** controls this. It's on by default.
+
+When **on**, Ditto launches `whisper-cli.exe` without the `-ng` flag and the GPU backend takes over. When **off**, the same binary runs with `-ng` (no GPU) and falls back to CPU.
+
+<Callout type="note">
+The same `whisper-cli.exe` is used in both modes — only the flag changes. Turning the toggle off doesn't disable the bundled CUDA DLLs; the binary still loads them at startup. They just sit idle.
+</Callout>
+
+## What's bundled
+
+Ditto ships the runtime libraries needed for CUDA so you don't have to install the CUDA Toolkit yourself. The installer includes:
+
+- `cudart64_12.dll` — CUDA runtime
+- `cublas64_12.dll`, `cublasLt64_12.dll`, `nvblas64_12.dll` — cuBLAS for linear algebra
+- `nvrtc64_120_0.dll`, `nvrtc-builtins64_124.dll` — runtime kernel compilation
+- `ggml-cuda.dll` — Whisper.cpp's CUDA backend
+
+These are distributed by NVIDIA under their CUDA EULA and are bundled with the [whisper.cpp Windows binaries](https://github.com/ggerganov/whisper.cpp/releases).
+
+You **do** still need a recent NVIDIA driver. Anything from the last few years should work — drivers ship the kernel-mode CUDA support that lives on the GPU side.
+
+## Hardware support
+
+GPU acceleration in Ditto requires:
+
+- **An NVIDIA GPU** with up-to-date drivers. Most consumer cards from the last 5–6 years work (GeForce GTX 10-series and newer, RTX cards, Quadros).
+- **CUDA Compute Capability 3.5 or higher** — basically anything Maxwell-era or newer.
+- **Enough VRAM** for the model. Roughly: Tiny needs ~150 MB, Base ~250 MB, Small ~600 MB, Medium ~2 GB, Large-v3 ~4 GB.
+
+<Callout type="note">
+AMD and Intel GPUs aren't supported in this release. Ditto bundles only the CUDA build of whisper.cpp. Contributions adding Vulkan or OpenCL builds are welcome.
+</Callout>
+
+## Verifying it's working
+
+There's no in-app indicator yet (planned for a future version), but you can confirm GPU usage two ways:
+
+**1. Watch your GPU during transcription.**
+
+Open **Task Manager → Performance → GPU**. Trigger a transcription with a medium or large model. You should see a brief spike in **CUDA utilization** (not 3D, not Video). Tiny and Base finish too fast for the spike to register clearly.
+
+**2. Compare timings with the toggle off and on.**
+
+Record a 10-second sentence with a medium-sized model. Transcribe once with GPU on, once with GPU off. The difference should be obvious — at minimum 3-4x faster on most cards.
+
+## When to turn it off
+
+GPU mode is the default and should work transparently for most NVIDIA users. Turn it off only if:
+
+- You're seeing driver crashes or system instability during transcription.
+- Your card is older than 2014 and CUDA mode falls back silently to a slow path.
+- You're on a laptop and want to save battery (CPU is more efficient on short clips than spinning up the GPU).
+
+Otherwise, leave it on.
+
+## If GPU mode fails to start
+
+Symptoms: transcription takes much longer than expected, or the binary silently runs in CPU mode despite the toggle being on.
+
+Things to check:
+
+- **Driver version.** Open NVIDIA's app or `Get-CimInstance Win32_VideoController` in PowerShell. Drivers older than ~2 years may not support the CUDA 12 runtime that Ditto bundles. Update via [GeForce Experience](https://www.nvidia.com/en-us/geforce/geforce-experience/) or NVIDIA's driver page.
+- **GPU is shared with another process that's hogging VRAM.** A browser doing GPU acceleration on dozens of tabs can leave you with too little free VRAM for Whisper. Close some tabs and retry.
+- **Hybrid laptops.** On laptops with both an integrated GPU and a discrete NVIDIA GPU, Windows may route Ditto to the integrated one. Open **Settings → System → Display → Graphics** in Windows and force "High performance" for `Ditto.exe`.
+
+If none of those help, file an issue on GitHub with the model size, the output you see in `Get-FileHash` for the model file, and your GPU model.

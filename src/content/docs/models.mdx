@@ -1,0 +1,93 @@
+---
+title: Models
+subtitle: The Whisper models behind Ditto's transcription, how to pick one, switch between them, and clean up disk space.
+section: Features
+order: 2
+---
+
+import Callout from "../../components/ui/Callout.astro";
+
+## What a model is
+
+Ditto runs [whisper.cpp](https://github.com/ggerganov/whisper.cpp), an optimized port of OpenAI's Whisper. Whisper ships in five sizes. Each one is a single binary file that gets loaded into RAM (and VRAM on GPU) when you transcribe.
+
+Bigger models are more accurate, especially on accents, technical jargon, and noisy audio. They're also slower and use more resources. For most day-to-day dictation, **Small** strikes the best balance.
+
+## The five sizes
+
+| Model | Size | Speed (GPU) | Speed (CPU) | Best for |
+|---|---|---|---|---|
+| Tiny | 75 MB | ~150 ms | ~1.5 s | Quick notes, low-spec machines |
+| Base | 142 MB | ~250 ms | ~3 s | Casual everyday use |
+| Small | 466 MB | ~500 ms | ~8 s | Daily use, recommended |
+| Medium | 1.5 GB | ~1.2 s | ~25 s | Accents, jargon, noisy environments |
+| Large-v3 | 2.9 GB | ~2.5 s | ~80 s | Maximum quality, slow without GPU |
+
+<Callout type="note">
+Actual times depend heavily on your hardware, the length of the recording, whether GPU acceleration is on, and how busy your system is. Treat the numbers above as ballpark, not absolute guarantees.
+</Callout>
+
+## Switching the active model
+
+1. Open Settings from the tray icon.
+2. Go to the **Models** panel.
+3. Click the row of the model you want to use. Only downloaded models can be selected. Non-downloaded models show a **Download** button instead.
+
+The change applies to the next transcription. Currently active models stay loaded between transcriptions for low latency, so switching may add a small delay on the first use of a new model.
+
+## Downloading
+
+If a model isn't downloaded yet, click **Download** in its row. Ditto fetches it from HuggingFace and saves it to your `%APPDATA%\ditto\models\` folder.
+
+A progress bar appears while it downloads. You can:
+
+- **Cancel** by clicking the X next to the progress bar. Partial files are cleaned up automatically.
+- **Switch tabs in Settings** while it runs. The download keeps going in the background.
+- **Trigger another transcription** with whatever model is currently active. Downloads don't block recording.
+
+<Callout type="tip">
+Models are around 75 MB to 2.9 GB. On a slow connection, Tiny or Base finish in a minute. Large-v3 can take 10-15 minutes.
+</Callout>
+
+## Refreshing the list
+
+If you delete a model file manually (from `%APPDATA%\ditto\models\` in Explorer), Ditto won't notice until you tell it to recheck. There's a refresh button next to the **Active model** title — click it and Ditto re-scans the folder.
+
+If the model that was active is gone, Ditto falls back to whichever model is still available, or reopens the welcome window if none remain.
+
+## Where they live
+
+All models live in a single folder:
+
+`%APPDATA%\ditto\models\`
+
+Filenames follow the pattern `ggml-<size>.bin`:
+
+- `ggml-tiny.bin`
+- `ggml-base.bin`
+- `ggml-small.bin`
+- `ggml-medium.bin`
+- `ggml-large-v3.bin`
+
+You can open this folder directly from **Settings → Models → Storage → Open folder**.
+
+## Removing a model
+
+To free disk space, just delete the `.bin` file from the models folder in Explorer. Then click the refresh button in **Settings → Models** so Ditto updates its UI.
+
+To remove **everything** Ditto stored (settings + all models):
+
+- Settings → Advanced → **Delete all data**
+
+This wipes `%APPDATA%\ditto\` entirely and restarts the app from scratch with the welcome window.
+
+## Which one should I pick?
+
+A rough guide:
+
+- **Default for trying it out:** Base. Small enough to download fast, big enough to get a feel for what Whisper can do.
+- **For everyday dictation:** Small. The sweet spot of speed and accuracy.
+- **For technical writing, accents, noisy rooms:** Medium or Large-v3. The jump in accuracy is real, especially with proper nouns and rare words.
+- **For older or low-RAM machines:** Tiny. Less accurate but always responsive.
+
+You can always switch later — there's no commitment to your first pick.

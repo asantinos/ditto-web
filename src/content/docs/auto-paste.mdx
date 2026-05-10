@@ -1,0 +1,70 @@
+---
+title: Auto-paste
+subtitle: How Ditto delivers your transcription into the active app, what to do when it doesn't work, and how to use clipboard-only mode instead.
+section: Features
+order: 3
+---
+
+import Callout from "../../components/ui/Callout.astro";
+
+## How it works
+
+After Whisper finishes transcribing, Ditto does three things in this order:
+
+1. **Copy the text to the clipboard** using Electron's clipboard API.
+2. **Wait 50 ms** so any app currently watching the clipboard has time to register the new content.
+3. **Simulate <kbd>Ctrl</kbd>+<kbd>V</kbd>** with [@nut-tree-fork/nut-js](https://github.com/nut-tree/nut.js), which sends a real `SendInput` keystroke to the OS. The active app receives it as if you'd pressed <kbd>Ctrl</kbd>+<kbd>V</kbd> yourself.
+
+There's no special integration with each target app. Ditto just types <kbd>Ctrl</kbd>+<kbd>V</kbd> into whatever has focus, the same way you would.
+
+## Turning auto-paste off
+
+By default Ditto pastes for you. You can switch it off in **Settings → General → Paste transcription automatically**.
+
+When auto-paste is **off**:
+
+- Your transcription is copied to the clipboard.
+- The pill briefly shows a check icon and the word "Copied!".
+- You paste manually with <kbd>Ctrl</kbd>+<kbd>V</kbd>.
+
+This is useful if you want to:
+
+- Review the text before pasting.
+- Paste into a place <kbd>Ctrl</kbd>+<kbd>V</kbd> doesn't work (some terminals, RDP sessions, certain games).
+- Use Ditto as a voice-to-clipboard tool only, without it touching your active app.
+
+## Keeping your previous clipboard
+
+By default, every transcription overwrites whatever was on your clipboard. That's annoying if you had something important copied before dictating.
+
+**Settings → General → Keep previous clipboard** changes the flow:
+
+1. Ditto snapshots your current clipboard text.
+2. Sets the transcription, simulates <kbd>Ctrl</kbd>+<kbd>V</kbd>.
+3. Restores the original clipboard text afterward.
+
+So after the paste, your old clipboard content is back where it was.
+
+<Callout type="note">
+Only **plain text** clipboard contents are restored. If you had a copied image, file, or rich-text, the snapshot is text-only — the rest is lost. This is a Windows clipboard limitation, not a Ditto choice.
+</Callout>
+
+<Callout type="tip">
+This option only appears when **Paste transcription automatically** is on. It doesn't make sense without auto-paste.
+</Callout>
+
+## When auto-paste doesn't land
+
+A handful of apps don't accept simulated keystrokes:
+
+- **Remote Desktop / RDP sessions** can block synthesized input as a security measure.
+- **Some games** filter input that doesn't come from a human keyboard.
+- **Hardened sandboxes** (some Electron apps with strict permissions, certain banking sites in browser kiosks) may also reject it.
+
+The transcription is still on your clipboard — it just doesn't paste itself. Press <kbd>Ctrl</kbd>+<kbd>V</kbd> manually, or use the dedicated paste gesture of the app (some terminals use <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd> or right-click).
+
+If <kbd>Ctrl</kbd>+<kbd>V</kbd> also doesn't work in that app (some terminals, vim in raw mode), you'll need to paste through the app's own mechanism (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd> in vim, right-click + Paste, etc.). Ditto can't help past that point.
+
+## Sound feedback
+
+Auto-paste happens fast and silently. If you'd like a small audible cue when transcription finishes, turn on **Settings → General → Sound when transcription finishes**. It plays a short, soft click — easy to ignore if you've got music on but useful in a quiet room.

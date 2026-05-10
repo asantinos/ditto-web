@@ -1,0 +1,119 @@
+---
+title: Storage & files
+subtitle: Where Ditto's files live on disk, how much space they take, and how to back up, migrate, or wipe them.
+section: Advanced
+order: 3
+---
+
+import Callout from "../../components/ui/Callout.astro";
+
+## The two main locations
+
+Ditto splits its files between two folders:
+
+| Path | What's there | Removed by |
+|---|---|---|
+| `%LOCALAPPDATA%\Programs\Ditto\` | The app itself: executable, DLLs, app code | Uninstaller |
+| `%APPDATA%\ditto\` | Your data: settings, downloaded models | Manual delete or "Delete all data" |
+
+Uninstalling Ditto removes the program folder but leaves your data. This is intentional — reinstalling preserves your shortcut, theme, downloaded models, etc. To remove everything, see the "Wiping" section below.
+
+## The program folder
+
+`%LOCALAPPDATA%\Programs\Ditto\` (typically around 1 GB after install)
+
+| Subpath | Contents |
+|---|---|
+| `Ditto.exe` | Main executable, ~120 MB |
+| `resources\app.asar` | App code (main, renderer, preload bundles) |
+| `resources\whisper\win32-x64\` | Whisper binary + 11 CUDA DLLs |
+| `Uninstall Ditto.exe` | NSIS uninstaller |
+| Several `.dll` files at the root | Electron runtime |
+
+You shouldn't need to touch any of this. Modifying it can break the app or trip integrity checks.
+
+<Callout type="note">
+The whisper folder accounts for most of the disk usage. The `cublasLt64_12.dll` library alone is around 450 MB. If you don't have an NVIDIA GPU, those DLLs sit unused but still take space. A future release may offer a lighter, GPU-less build.
+</Callout>
+
+## The user data folder
+
+`%APPDATA%\ditto\`
+
+```
+ditto/
+├── config.json       — your settings
+├── models/           — downloaded Whisper models
+│   ├── ggml-base.bin
+│   ├── ggml-small.bin
+│   └── ...
+└── Cache/, Code Cache/, GPUCache/  — Chromium caches (auto-managed)
+```
+
+What you'd actually care about:
+
+**`config.json`** is your settings file. Plain text JSON, safe to back up or version-control. Open it with any editor to inspect.
+
+**`models/`** is where every model you've downloaded lives. Each `.bin` is between 75 MB and 2.9 GB depending on the model size. To free disk space, delete files here directly and click the refresh button in **Settings → Models**.
+
+**Caches** are Chromium's standard renderer caches. They auto-manage themselves. Safe to delete if you want — they'll be regenerated.
+
+## Temporary files
+
+While transcribing, Ditto writes a temporary WAV to `%TEMP%`:
+
+`%TEMP%\ditto-<timestamp>.wav`
+
+It's deleted immediately after the transcription finishes (in the IPC handler's `finally` block). If Ditto crashes mid-transcription, the WAV may be left behind — Windows' built-in temp cleanup eventually removes it, or you can clear `%TEMP%` manually.
+
+## Backing up your setup
+
+If you want to preserve your settings and downloaded models:
+
+1. Close Ditto (right-click tray → Quit).
+2. Copy `%APPDATA%\ditto\` to a backup location (USB, cloud sync folder, etc.).
+3. Restart Ditto.
+
+That single folder is everything Ditto needs to recreate your setup. The program folder is interchangeable across installs of the same version.
+
+## Migrating to a new machine
+
+To move Ditto to a different PC:
+
+1. **On the old machine:** copy `%APPDATA%\ditto\` to a USB stick or network share.
+2. **On the new machine:** install Ditto from the latest installer.
+3. Before the welcome window appears (or right after closing it), copy the `ditto` folder into `%APPDATA%\` on the new machine, replacing the one Ditto created on first launch.
+4. Start Ditto. Your shortcut, theme, language, and models are all there.
+
+<Callout type="tip">
+If your two machines have very different hardware (e.g. moving from a CPU-only laptop to a GPU desktop), you may want to download a bigger model on the new machine to take advantage of the upgrade.
+</Callout>
+
+## Wiping everything
+
+To completely reset Ditto:
+
+**From the app:** **Settings → Advanced → Delete all data**.
+
+This:
+
+- Resets every setting to its default.
+- Deletes `%APPDATA%\ditto\models\` (all your downloaded models).
+- Drops the "start with Windows" registry entry if it was set.
+- Restarts the app from scratch — you'll see the welcome window again.
+
+**Manually:** close Ditto, then `rmdir /s /q "%APPDATA%\ditto"` in cmd (or delete the folder in Explorer). On next launch, Ditto recreates an empty user data folder and shows the welcome window.
+
+<Callout type="note">
+"Delete all data" doesn't uninstall the app — only your data. To remove the app itself, use Windows' **Apps & features**.
+</Callout>
+
+## Quick reference
+
+| Action | Path |
+|---|---|
+| Edit settings | `%APPDATA%\ditto\config.json` |
+| Delete a downloaded model | `%APPDATA%\ditto\models\ggml-<size>.bin` |
+| Open the models folder | Settings → Models → Storage → Open folder |
+| Find the executable | `%LOCALAPPDATA%\Programs\Ditto\Ditto.exe` |
+| Find the uninstaller | `%LOCALAPPDATA%\Programs\Ditto\Uninstall Ditto.exe` |

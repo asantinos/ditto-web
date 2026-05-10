@@ -1,0 +1,122 @@
+---
+title: Troubleshooting
+subtitle: Common issues, organized by what you were trying to do when things broke.
+section: Advanced
+order: 4
+---
+
+## Install and startup
+
+### "Windows protected your PC" appears
+
+The installer is not yet code-signed, so SmartScreen flags it as unrecognized. Click **More info → Run anyway**. This is normal for unsigned open source apps.
+
+### My antivirus deleted or quarantined the installer
+
+Some antivirus products treat unsigned Electron apps as suspicious. The installer is safe — you can verify by checking the SHA-256 hash on the [release page](https://github.com/asantinos/ditto/releases) against the file you downloaded. Whitelist `Ditto-Setup-1.0.0.exe` in your antivirus and try again.
+
+### The installer hangs at "Installing"
+
+If progress freezes for more than ~5 minutes with no disk or CPU activity, Windows Defender is likely scanning aggressively in the background. Restart the machine and re-run the installer. This is a Defender state issue, not the installer itself.
+
+### Ditto doesn't show up after install
+
+By design — Ditto runs in the system tray, not as a window. Look for the tray icon near the clock (the up-arrow may be hiding it). Right-click it to access the menu, or left-click to toggle the pill.
+
+### The tray icon never appears
+
+This usually means the app crashed silently on first launch. Open PowerShell, navigate to `%LOCALAPPDATA%\Programs\Ditto\`, and run `Ditto.exe` from there to see any console output. Open an issue on GitHub with whatever you see.
+
+## Recording
+
+### My shortcut does nothing
+
+Another app has reserved the same combination. Open **Settings → Shortcut**, pick a different combo (<kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd> and <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>D</kbd> rarely conflict), and try again. See [Shortcuts](/docs/shortcuts) for more.
+
+### The pill never appears when I record
+
+Two possible causes:
+
+- **"Hide pill when not in use" is on.** That's expected — the pill is hidden in idle and only appears during recording or transcription.
+- **The pill is off-screen.** This can happen if you dragged it on a monitor that's no longer connected. Reset by clicking a different position in **Settings → Appearance → Position on screen**.
+
+### The voice bars don't move while I speak
+
+The mic isn't reaching Ditto. Check:
+
+1. **Settings → Audio → Microphone** — is the right device selected?
+2. **Windows mic permission** — **Settings → Privacy & security → Microphone**, make sure Ditto is allowed.
+3. **Mic gain too low** — try bumping it up to 130-150% in **Settings → Audio → Microphone gain**.
+
+### Welcome window keeps appearing every time I launch
+
+Ditto thinks no model is downloaded. Check `%APPDATA%\ditto\models\` in Explorer. If the folder is empty, complete the welcome flow once and it won't show again. If the folder has model files but welcome still appears, file an issue with the contents of that folder.
+
+## Transcription
+
+### The transcription is wrong or garbled
+
+A few things to try, in order:
+
+1. **Set a fixed transcription language** instead of Auto-detect, in **Settings → Audio → Language**.
+2. **Try a bigger model.** Tiny and Base are fast but make more mistakes. Switch to Small or Medium for noticeable quality jumps.
+3. **Check your mic.** Recording into a laptop's built-in mic in a noisy room is the most common cause of bad output. A USB or headset mic helps a lot.
+4. **Turn on the noise filter** if you have constant background noise (fan, AC). **Settings → Audio → Noise filter**.
+
+### The output is in the wrong language
+
+You're on Auto-detect and Whisper guessed wrong. Set the language explicitly in **Settings → Audio → Language**. See [Audio input](/docs/audio-input).
+
+### Transcription is very slow despite GPU mode being on
+
+Either GPU mode isn't actually working, or your model is huge. Open **Task Manager → Performance → GPU** and check CUDA utilization during a transcription. If it stays at 0%, see the [GPU acceleration](/docs/gpu-acceleration) page for diagnosis.
+
+### Recording stops but no text is pasted
+
+The model file may have been deleted. Ditto detects this and reopens the welcome window automatically — pick and download a model, then try again. If welcome doesn't appear, check `%APPDATA%\ditto\models\` and confirm your selected model file is there.
+
+## Pasting
+
+### The text appears in the clipboard but not in my app
+
+Some apps reject simulated keystrokes:
+
+- Remote Desktop / RDP sessions
+- Some games and anti-cheat-protected programs
+- Sandboxed text fields (rare)
+
+Press <kbd>Ctrl</kbd>+<kbd>V</kbd> manually. If that doesn't work either, the app likely uses a different paste shortcut (terminals often need <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>V</kbd> or right-click).
+
+### My previous clipboard wasn't restored
+
+"Keep previous clipboard" only restores **plain text**. Images, files, and rich-text formats are not snapshot-able through Electron's API. This is a Windows clipboard limitation, not a Ditto choice.
+
+### Auto-paste leaves trailing whitespace or extra characters
+
+Some apps interpret Whisper's output literally including line breaks. This is rare and depends on the target app. If it bothers you, turn off auto-paste so you can paste manually with <kbd>Ctrl</kbd>+<kbd>V</kbd> — same content, but under your control.
+
+## Settings and data
+
+### Settings won't save
+
+Ditto writes to `%APPDATA%\ditto\config.json`. If that file is read-only, on a synced cloud folder with conflicts, or the disk is full, writes can silently fail. Check the file's properties and free disk space.
+
+### "Delete all data" doesn't uninstall the app
+
+Correct — it only wipes user data. Use **Windows Settings → Apps → Installed apps → Ditto → Uninstall** to remove the program itself.
+
+### Uninstalling left a folder behind
+
+Yes — `%APPDATA%\ditto\` is preserved on uninstall so you don't lose settings on reinstall. Delete it manually if you want a clean slate.
+
+## Still stuck?
+
+If your problem isn't covered here, open an issue on [GitHub](https://github.com/asantinos/ditto/issues/new).
+
+Helpful information to include:
+
+- Windows version (`winver`)
+- GPU model and driver version (if relevant)
+- Ditto version (visible in **Settings → About**)
+- The model size you're using
+- A short description of what you tried and what you saw

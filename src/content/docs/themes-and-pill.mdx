@@ -1,0 +1,96 @@
+---
+title: Themes & pill
+subtitle: Customizing how the floating pill looks, where it appears, and how it behaves while you work.
+section: Features
+order: 5
+---
+
+import Callout from "../../components/ui/Callout.astro";
+
+## What the pill is
+
+The pill is the small floating window Ditto uses to show its state. It sits above other windows, follows you across virtual desktops, and stays out of the way until you trigger a recording.
+
+Some behavior you should know:
+
+- **Always on top.** The pill never gets covered by other windows, including fullscreen apps.
+- **Click-through.** Mouse clicks on transparent margins around the pill pass through to the window underneath. Only clicks on the visible pill body affect Ditto. This means you can leave the pill on top of buttons or text without losing access to them.
+- **Drag to move.** Click and drag anywhere on the visible pill to reposition it. The new spot is remembered (see "Remember last position" below).
+- **Skip taskbar.** The pill never appears in the taskbar or <kbd>Alt</kbd>+<kbd>Tab</kbd> list. It's controlled from the system tray instead.
+
+## The five themes
+
+**Settings → Appearance → Pill theme** offers five looks:
+
+- **Matte** — off-white, soft shadow, voice-reactive bars in front. The default. Inspired by Apple's matte hardware finishes.
+- **Onyx** — dark grey, same bar visualization as Matte but inverted. Pairs well with dark wallpapers and OLED screens.
+- **Aurora** — soft pink–violet–blue gradient with a wave at the bottom that reacts to your voice. Most expressive.
+- **Sunset** — warm orange-to-red gradient, same wave style as Aurora.
+- **Mint** — cool teal–turquoise gradient, same wave style as Aurora.
+
+Theme changes apply instantly — you'll see the pill on screen update the moment you click a different one.
+
+## Voice-reactivity
+
+While you record, the pill animates in real time based on what your microphone hears. Two visual styles depending on the theme:
+
+- **Matte and Onyx** show 13 vertical bars in front of the pill, like a tiny EQ. Each bar maps to a frequency band; louder voice means taller bars.
+- **Aurora, Sunset, and Mint** show a wave at the bottom of the pill. Peaks follow your voice. Quieter audio leaves the wave flatter.
+
+Both styles run at 60 fps using Web Audio's AnalyserNode, so the visualization is genuinely real-time, not a fake animation.
+
+<Callout type="tip">
+If the pill doesn't react when you speak, the mic isn't reaching Ditto. Check **Settings → Audio** for the right device and make sure Windows hasn't muted it.
+</Callout>
+
+## Where the pill appears
+
+**Settings → Appearance → Position on screen** has six anchor points:
+
+```
+top-left      top      top-right
+bottom-left   bottom   bottom-right
+```
+
+The pill is placed inside the work area of the chosen monitor, with a small margin from the edge so it doesn't overlap with the taskbar.
+
+This is the **default** position — the pill returns here when:
+
+- You haven't moved it manually yet.
+- You change the position in settings.
+- You change the display preference.
+
+If you drag the pill somewhere else, that drag overrides the default until you reset it (see next section).
+
+## Remembering your last position
+
+**Settings → Appearance → Remember last position** is on by default. With it on:
+
+- The first time the pill appears, it goes to the chosen anchor point.
+- If you drag it elsewhere, that new spot is saved.
+- The next time the pill shows up, it appears where you left it.
+
+Turn it off if you'd rather have the pill always snap to its anchor — useful on multi-monitor setups where you want the pill to follow the chosen monitor and not stay where you dragged it last.
+
+## Hide when idle
+
+**Settings → Appearance → Hide pill when not in use** keeps the pill out of sight when nothing is happening. With it on:
+
+- The pill is hidden in idle.
+- It appears the moment you start recording.
+- It hides again after the transcription finishes.
+
+The shortcut still works while the pill is hidden — you don't need it visible to dictate. Use this if you find the always-visible pill distracting.
+
+<Callout type="tip">
+Even with hide-when-idle on, you can pop the pill back manually from the tray icon (left-click toggles visibility).
+</Callout>
+
+## Multiple monitors
+
+**Settings → Appearance → Show on monitor** decides where the pill goes when there's more than one display:
+
+- **Active monitor (where the cursor is)** — default. The pill appears on whichever monitor your cursor is currently on, which is usually whichever you're actively using.
+- **A specific monitor** — pick one from the list. The pill stays there no matter where your cursor is.
+
+This only affects the **anchor** position. If "Remember last position" is on and you've dragged the pill, that drag wins.
