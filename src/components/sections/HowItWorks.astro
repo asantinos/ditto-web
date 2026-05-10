@@ -1,0 +1,412 @@
+---
+/**
+ * "How it works" — 3 step cards with cursive Caveat labels and hand-drawn
+ * SVG arrows pointing FROM the label TO the card (CLAUDE.md §5.5).
+ *
+ * Step 1: keyboard mock with Ctrl + Shift + Space pulse animation
+ * Step 2: pill in recording state, scaled 1.2 for emphasis
+ * Step 3: chat window mock with green-highlighted typed text
+ *
+ * Connectors hidden on ≤900px (mobile stacks the cards vertically).
+ */
+import SectionTag from "../ui/SectionTag.astro";
+import Pill from "../ui/Pill.astro";
+---
+
+<section id="how" class="how-section">
+  <div class="how-wrapper">
+    <div class="how-tag-row">
+      <SectionTag class="no-mb">How it works</SectionTag>
+    </div>
+    <h2 class="how-title">Fast & <span class="display-italic">easy</span></h2>
+
+    <div class="how-grid">
+      <!-- Step 1 connector -->
+      <div class="how-connector conn-step1" aria-hidden="true">
+        <span class="label">Step 1</span>
+        <div class="arrow-wrap">
+          <svg width="80" height="50" viewBox="0 0 80 50" fill="none">
+            <path d="M75 45 C 55 40, 30 30, 8 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" fill="none" />
+            <path d="M8 8 L 16 10 M8 8 L 12 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- STEP 1: Press the shortcut -->
+      <div class="step-card">
+        <div class="step-card-title">Press the shortcut</div>
+        <div class="step-mock">
+          <div class="keys-mock">
+            <div class="keys-row" style="transform: translateX(16px);">
+              <div class="key">A</div><div class="key">S</div><div class="key">D</div>
+              <div class="key">F</div><div class="key">G</div><div class="key">H</div>
+              <div class="key">J</div><div class="key">K</div>
+            </div>
+            <div class="keys-row">
+              <div class="key wide active keys-pulse" style="animation-delay: 100ms;">Shift</div>
+              <div class="key">Z</div><div class="key">X</div><div class="key">C</div>
+              <div class="key">V</div><div class="key">B</div><div class="key">N</div>
+            </div>
+            <div class="keys-row" style="transform: translateX(8px);">
+              <div class="key wide active keys-pulse">Ctrl</div>
+              <div class="key">
+                <svg viewBox="0 0 12 12" width="8" height="8" fill="currentColor" style="display:block;">
+                  <rect x="0" y="0" width="5" height="5" rx="0.5" />
+                  <rect x="7" y="0" width="5" height="5" rx="0.5" />
+                  <rect x="0" y="7" width="5" height="5" rx="0.5" />
+                  <rect x="7" y="7" width="5" height="5" rx="0.5" />
+                </svg>
+              </div>
+              <div class="key">Alt</div>
+              <div class="key xwide active keys-pulse" style="animation-delay: 200ms;">Space</div>
+              <div class="key">Alt</div>
+              <div class="key">
+                <svg viewBox="0 0 12 12" width="8" height="8" fill="currentColor" style="display:block;">
+                  <rect x="0" y="0" width="5" height="5" rx="0.5" />
+                  <rect x="7" y="0" width="5" height="5" rx="0.5" />
+                  <rect x="0" y="7" width="5" height="5" rx="0.5" />
+                  <rect x="7" y="7" width="5" height="5" rx="0.5" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step-foot">From any app. No need to switch windows or click anything.</div>
+      </div>
+
+      <!-- STEP 2: Speak naturally -->
+      <div class="step-card">
+        <div class="step-card-title">Speak naturally</div>
+        <div class="step-mock">
+          <div class="step2-stage">
+            <Pill theme="matte" state="recording" id="how-step2" />
+          </div>
+        </div>
+        <div class="step-foot">No commands or wake words. Just talk and Ditto listens until you stop.</div>
+      </div>
+
+      <!-- Step 2 connector -->
+      <div class="how-connector conn-step2" aria-hidden="true">
+        <svg width="40" height="60" viewBox="0 0 40 60" fill="none">
+          <path d="M20 5 C 18 18, 22 35, 20 48" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" fill="none" />
+          <path d="M20 48 L 14 43 M20 48 L 26 43" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+        </svg>
+        <span class="label">Step 2</span>
+      </div>
+
+      <!-- STEP 3: Text appears -->
+      <div class="step-card">
+        <div class="step-card-title">Text appears</div>
+        <div class="step-mock">
+          <div class="step3-mock">
+            <div class="step3-window">
+              <div class="step3-titlebar">
+                <div class="mini-dots" aria-hidden="true">
+                  <span></span><span></span><span></span>
+                </div>
+                <span>slack · #design</span>
+              </div>
+              <div class="step3-content">
+                Let's reschedule the sync for <span class="typed">Tuesday afternoon, around 3pm.</span><span class="step3-cursor" aria-hidden="true"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step-foot">Pasted instantly where your cursor is. Like you typed it yourself.</div>
+      </div>
+
+      <!-- Step 3 connector -->
+      <div class="how-connector conn-step3" aria-hidden="true">
+        <span class="label">Step 3</span>
+        <div class="arrow-wrap">
+          <svg width="80" height="50" viewBox="0 0 80 50" fill="none">
+            <path d="M5 45 C 25 40, 50 30, 72 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" fill="none" />
+            <path d="M72 8 L 64 10 M72 8 L 68 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .how-section {
+    max-width: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
+  }
+  .how-wrapper {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 80px 80px 140px;
+    position: relative;
+  }
+  .how-tag-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 28px;
+  }
+  /* SectionTag has margin-bottom by default; remove it when used inside the row */
+  :global(.section-tag.no-mb) {
+    margin-bottom: 0;
+  }
+  .how-title {
+    font-size: clamp(40px, 5.5vw, 64px);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    text-align: center;
+    margin-bottom: 80px;
+  }
+
+  .how-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    position: relative;
+  }
+
+  /* CONNECTORS — cursive labels + hand-drawn SVG arrows */
+  .how-connector {
+    position: absolute;
+    pointer-events: none;
+    color: var(--color-text-tertiary);
+    z-index: 1;
+  }
+  .how-connector .label {
+    font-family: "Caveat", "Bradley Hand", cursive;
+    font-size: 24px;
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+  .how-connector svg {
+    display: block;
+    overflow: visible;
+  }
+  .conn-step1 {
+    top: -68px;
+    left: 12%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .conn-step1 .arrow-wrap {
+    margin-top: 4px;
+    margin-left: 24px;
+  }
+  .conn-step2 {
+    bottom: -76px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .conn-step3 {
+    top: -68px;
+    right: 12%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  .conn-step3 .arrow-wrap {
+    margin-top: 4px;
+    margin-right: 24px;
+  }
+
+  /* STEP CARDS */
+  .step-card {
+    background: var(--color-surface);
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: 28px;
+    box-shadow: var(--shadow-sm);
+    min-height: 360px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 2;
+  }
+  .step-card-title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    margin-bottom: 24px;
+  }
+  .step-mock {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    min-height: 200px;
+  }
+  .step-foot {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    text-align: center;
+    margin-top: 16px;
+    max-width: 280px;
+    align-self: center;
+  }
+
+  /* STEP 1: keys mock */
+  .keys-mock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .keys-row {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  .keys-row .key {
+    width: 26px;
+    height: 26px;
+    background: linear-gradient(180deg, #ffffff, #f0f0f2);
+    border: 0.5px solid var(--color-border-strong);
+    border-radius: 5px;
+    font-size: 9px;
+    color: var(--color-text-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 1),
+      0 1px 0 rgba(0, 0, 0, 0.06);
+  }
+  .keys-row .key.wide { width: 56px; }
+  .keys-row .key.xwide { width: 110px; }
+  .keys-row .key.active {
+    background: linear-gradient(180deg, #2c2c2e, #131316);
+    color: white;
+    font-weight: 600;
+    font-size: 10px;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.15),
+      0 0 0 0.5px rgba(0, 0, 0, 0.4),
+      0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  .keys-pulse {
+    animation: key-press 2s ease-in-out infinite;
+  }
+  @keyframes key-press {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(2px); }
+  }
+
+  /* STEP 2: pill stage scaled up */
+  .step2-stage {
+    transform: scale(1.2);
+  }
+
+  /* STEP 3: chat window mock */
+  .step3-mock {
+    width: 100%;
+    max-width: 280px;
+  }
+  .step3-window {
+    background: var(--color-surface);
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-xs);
+  }
+  .step3-titlebar {
+    padding: 8px 12px;
+    background: linear-gradient(180deg, #fafafb, #f2f2f4);
+    border-bottom: 0.5px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    color: var(--color-text-tertiary);
+  }
+  .step3-titlebar .mini-dots {
+    display: flex;
+    gap: 3px;
+  }
+  .step3-titlebar .mini-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+  .step3-titlebar .mini-dots span:nth-child(1) { background: #ff5f57; }
+  .step3-titlebar .mini-dots span:nth-child(2) { background: #febc2e; }
+  .step3-titlebar .mini-dots span:nth-child(3) { background: #28c840; }
+  .step3-content {
+    padding: 14px 16px;
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--color-text);
+    min-height: 80px;
+  }
+  .step3-content .typed {
+    background: linear-gradient(180deg, rgba(52, 199, 89, 0.18), rgba(52, 199, 89, 0.06));
+    padding: 1px 3px;
+    border-radius: 2px;
+    border-bottom: 1px solid rgba(52, 199, 89, 0.4);
+    animation: type-in 0.6s ease-out;
+  }
+  @keyframes type-in {
+    from { opacity: 0; transform: translateY(-2px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .step3-cursor {
+    display: inline-block;
+    width: 1.5px;
+    height: 1em;
+    background: var(--color-text);
+    vertical-align: text-bottom;
+    animation: cursor-blink 1s steps(1) infinite;
+    margin-left: 1px;
+  }
+  @keyframes cursor-blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 1024px) {
+    .how-wrapper { padding: 60px 32px 100px; }
+  }
+  @media (max-width: 900px) {
+    .how-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+    .how-connector { display: none; }
+  }
+  @media (max-width: 700px) {
+    .how-wrapper { padding: 48px 24px 64px; }
+    .step-card {
+      padding: 24px 20px;
+      min-height: auto;
+    }
+    .step-card-title {
+      font-size: 16px;
+      margin-bottom: 18px;
+    }
+    .step-mock {
+      min-height: 160px;
+      padding: 8px;
+    }
+    .keys-mock {
+      transform: scale(0.85);
+      transform-origin: center;
+    }
+    .step2-stage {
+      transform: scale(1);
+    }
+  }
+  @media (max-width: 480px) {
+    .how-wrapper { padding: 40px 16px 56px; }
+    .step-card { padding: 20px 16px; }
+    .keys-mock { transform: scale(0.72); }
+  }
+</style>
