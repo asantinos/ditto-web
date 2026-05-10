@@ -1,0 +1,170 @@
+---
+/**
+ * Frequently asked questions — accordion with one item open by default.
+ *
+ * Click any question to toggle. Opening one closes the previously open
+ * one (single-open accordion pattern). Smooth max-height transition;
+ * the icon rotates 45° from + to ×.
+ */
+import SectionTag from "../ui/SectionTag.astro";
+
+const faqs = [
+  {
+    q: "Is Ditto really 100% local?",
+    a: "Yes. Ditto bundles Whisper.cpp and runs all transcription on your machine. Your audio is never uploaded anywhere. No telemetry on what you say.",
+    open: true,
+  },
+  {
+    q: "What languages does it support?",
+    a: "Whisper supports 100+ languages including English, Spanish, French, German, Italian, Portuguese, Japanese, Korean, Chinese and more. You can let Ditto auto-detect or fix one for better speed and accuracy.",
+  },
+  {
+    q: "What are the system requirements?",
+    a: "Windows 10 or 11 (64-bit), 4 GB RAM minimum, 1 GB free disk space. NVIDIA GPU recommended for faster transcription with larger models.",
+  },
+  {
+    q: "Is there a Mac version?",
+    a: "Not yet. macOS support is on the roadmap. Sign up on the download page to get notified when it's ready.",
+  },
+  {
+    q: "Will Ditto always be free?",
+    a: "The current version is free. We may introduce paid features later (cloud sync, team plans, custom models), but the core local transcription will remain free.",
+  },
+  {
+    q: "Can I customize the shortcut?",
+    a: "Yes. You can pick any key combination, and choose between toggle (press to start, press again to stop) or push-to-talk (hold while speaking).",
+  },
+];
+---
+
+<section class="page-section">
+  <div class="section-head">
+    <SectionTag>FAQ</SectionTag>
+    <h2 class="section-title">
+      Questions, <span class="display-italic">answered.</span>
+    </h2>
+  </div>
+
+  <div class="faq-list">
+    {
+      faqs.map((f) => (
+        <div class="faq-item" data-open={f.open ? "true" : "false"}>
+          <button class="faq-q" type="button">
+            {f.q}
+            <svg class="icon" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+          </button>
+          <div class="faq-a-wrap">
+            <div class="faq-a-inner">{f.a}</div>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .faq-item {
+    background: var(--color-surface);
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-xs);
+  }
+  .faq-q {
+    width: 100%;
+    padding: 22px 24px;
+    background: transparent;
+    border: none;
+    text-align: left;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--color-text);
+    letter-spacing: -0.01em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+  }
+  .faq-q .icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    color: var(--color-text-tertiary);
+    transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .faq-item[data-open="true"] .faq-q .icon {
+    transform: rotate(45deg);
+  }
+  .faq-a-wrap {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 350ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .faq-a-inner {
+    padding: 0 24px 22px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+  }
+
+  @media (max-width: 700px) {
+    .faq-q {
+      font-size: 15px;
+      padding: 18px 20px;
+    }
+    .faq-a-inner {
+      padding: 0 20px 18px;
+      font-size: 14px;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Single-open accordion: clicking an item closes any other open one,
+   * then toggles the clicked one. Animates max-height to the inner's
+   * scrollHeight so the transition is exact.
+   */
+  document.querySelectorAll<HTMLElement>(".faq-item").forEach((item) => {
+    const wrap = item.querySelector<HTMLElement>(".faq-a-wrap");
+    const inner = item.querySelector<HTMLElement>(".faq-a-inner");
+    const q = item.querySelector<HTMLButtonElement>(".faq-q");
+    if (!wrap || !inner || !q) return;
+
+    // If marked open by default in the markup, set initial height
+    if (item.dataset.open === "true") {
+      wrap.style.maxHeight = inner.scrollHeight + "px";
+    }
+
+    q.addEventListener("click", () => {
+      const isOpen = item.dataset.open === "true";
+
+      // Close all others
+      document.querySelectorAll<HTMLElement>(".faq-item").forEach((other) => {
+        if (other === item) return;
+        other.dataset.open = "false";
+        const otherWrap = other.querySelector<HTMLElement>(".faq-a-wrap");
+        if (otherWrap) otherWrap.style.maxHeight = "0px";
+      });
+
+      // Toggle this one
+      if (isOpen) {
+        item.dataset.open = "false";
+        wrap.style.maxHeight = "0px";
+      } else {
+        item.dataset.open = "true";
+        wrap.style.maxHeight = inner.scrollHeight + "px";
+      }
+    });
+  });
+</script>

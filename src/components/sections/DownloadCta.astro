@@ -1,0 +1,132 @@
+---
+/**
+ * Final CTA before the FAQ — large pill (scale 1.8), title, subtitle,
+ * chrome download button, and meta line with version/size.
+ *
+ * Reused on /download too if/when we add a similar block there. For
+ * now, lives only on the landing.
+ */
+import Pill from "../ui/Pill.astro";
+import ChromeButton from "../ui/ChromeButton.astro";
+
+const RELEASES_LATEST = "https://github.com/asantinos/ditto/releases/latest";
+---
+
+<section class="page-section">
+  <div class="download-cta">
+    <div class="download-cta-pill-stage">
+      <Pill theme="matte" state="idle" id="download-cta" />
+    </div>
+
+    <h2 class="section-title">
+      Ready to type with <span class="display-italic">your voice?</span>
+    </h2>
+    <p class="section-subtitle">Free. No account. Works offline. Download and start in 2 minutes.</p>
+
+    <div class="download-cta-actions">
+      <ChromeButton href={RELEASES_LATEST} external release>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path
+            d="M8 2v9M5 8l3 3 3-3M3 14h10"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          ></path>
+        </svg>
+        Download for Windows
+      </ChromeButton>
+
+      <div class="download-cta-meta">
+        <span class="js-release-version">v1.0.0</span>
+        <span class="dot" aria-hidden="true"></span>
+        <span class="js-release-size">525 MB</span>
+        <span class="dot" aria-hidden="true"></span>
+        <span>Windows 10/11</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .download-cta {
+    background: linear-gradient(180deg, var(--color-surface), var(--color-bg-elevated));
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius-2xl);
+    padding: 100px 32px 100px;
+    box-shadow: var(--shadow-md);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .download-cta::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.8), transparent 60%);
+    pointer-events: none;
+  }
+
+  /* Pill stage scaled up. Wraps via inline-flex for proper margin handling. */
+  .download-cta-pill-stage {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    margin-bottom: 56px;
+  }
+  .download-cta-pill-stage :global(.pill) {
+    transform: scale(1.8);
+  }
+
+  /* z-index lifts to clear the radial overlay */
+  .download-cta :global(.section-title),
+  .download-cta :global(.section-subtitle),
+  .download-cta-actions {
+    position: relative;
+    z-index: 1;
+  }
+  .download-cta :global(.section-subtitle) {
+    margin-bottom: 36px;
+  }
+
+  .download-cta-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .download-cta-meta {
+    font-size: 12px;
+    color: var(--color-text-tertiary);
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+  .download-cta-meta .dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--color-text-quaternary);
+  }
+
+  @media (max-width: 900px) {
+    .download-cta { padding: 80px 24px 80px; }
+    .download-cta-pill-stage :global(.pill) { transform: scale(1.4); }
+  }
+  @media (max-width: 700px) {
+    .download-cta { padding: 64px 20px 64px; }
+    .download-cta-pill-stage { margin-bottom: 36px; }
+    .download-cta-pill-stage :global(.pill) { transform: scale(1.2); }
+    .download-cta-actions { width: 100%; }
+    .download-cta-actions :global(.btn-chrome) { width: 100%; }
+  }
+  @media (max-width: 480px) {
+    .download-cta { padding: 56px 16px 56px; }
+    .download-cta-pill-stage :global(.pill) { transform: scale(1.05); }
+  }
+</style>

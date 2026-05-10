@@ -1,0 +1,85 @@
+---
+/**
+ * Privacy callout — single horizontal block reinforcing the "100% local"
+ * positioning (CLAUDE.md §1, §8). Big shield icon + headline + paragraph.
+ *
+ * On mobile the icon centers above the text.
+ */
+---
+
+<section class="page-section">
+  <div class="privacy">
+    <div class="privacy-icon" aria-hidden="true">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+        <path
+          d="M12 3l8 2.5v6.5c0 5-3.3 8.5-8 10-4.7-1.5-8-5-8-10V5.5L12 3z"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linejoin="round"
+        ></path>
+        <path
+          d="M9 12l2 2 4-4.5"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        ></path>
+      </svg>
+    </div>
+    <div>
+      <div class="privacy-title">Your voice never leaves your device.</div>
+      <div class="privacy-text">
+        Ditto runs Whisper locally. No cloud uploads, no analytics on your audio, no account required. What you say stays on your machine.
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .privacy {
+    background: var(--color-surface);
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius-2xl);
+    padding: 56px 48px;
+    box-shadow: var(--shadow-sm);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .privacy-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(180deg, var(--color-surface-alt), var(--color-bg-elevated));
+    border: 0.5px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-xs);
+    flex-shrink: 0;
+  }
+  .privacy-title {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    margin-bottom: 8px;
+  }
+  .privacy-text {
+    font-size: 15px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    max-width: 600px;
+  }
+
+  @media (max-width: 900px) {
+    .privacy {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+    .privacy-icon { margin: 0 auto; }
+  }
+  @media (max-width: 700px) {
+    .privacy { padding: 64px 24px 56px; }
+  }
+</style>

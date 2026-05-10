@@ -1,0 +1,116 @@
+---
+/**
+ * Themes showcase — 5 cells, one per pill theme. Hovering any cell flips
+ * the pill from idle to recording. Mouse-leave returns to idle.
+ *
+ * Listed in CLAUDE.md §5.1 as the canonical 5: matte / onyx / aurora /
+ * sunset / mint. Don't add new themes here without coordination.
+ */
+import SectionTag from "../ui/SectionTag.astro";
+import Pill from "../ui/Pill.astro";
+
+import type { PillTheme } from "../ui/Pill.astro";
+
+const themes: { name: string; id: PillTheme }[] = [
+  { name: "Matte", id: "matte" },
+  { name: "Onyx", id: "onyx" },
+  { name: "Aurora", id: "aurora" },
+  { name: "Sunset", id: "sunset" },
+  { name: "Mint", id: "mint" },
+];
+---
+
+<section class="page-section">
+  <div class="section-head">
+    <SectionTag>Themes</SectionTag>
+    <h2 class="section-title">
+      Pick a <span class="display-italic">vibe.</span>
+    </h2>
+    <p class="section-subtitle">Five themes. Hover any pill to hear it record.</p>
+  </div>
+
+  <div class="themes-stage-section">
+    <div class="themes-grid">
+      {
+        themes.map((t) => (
+          <div class="theme-cell" data-theme-cell>
+            <div class="theme-pill-stage">
+              <Pill theme={t.id} state="idle" id={`theme-${t.id}`} />
+            </div>
+            <div class="theme-cell-name">{t.name}</div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .themes-stage-section {
+    background: linear-gradient(180deg, var(--color-surface), var(--color-bg-elevated));
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius-2xl);
+    padding: 100px 32px 80px;
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+  }
+  .themes-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 24px;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 40px 0;
+  }
+  .theme-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    padding: 32px 12px 24px;
+    cursor: pointer;
+  }
+  .theme-pill-stage {
+    transform: scale(1.1);
+    transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .theme-cell:hover .theme-pill-stage {
+    transform: scale(1.15);
+  }
+  .theme-cell-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text);
+    letter-spacing: -0.01em;
+  }
+
+  @media (max-width: 900px) {
+    .themes-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 700px) {
+    .themes-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .theme-cell { padding: 32px 24px; }
+    .themes-stage-section { padding: 0 20px; }
+  }
+</style>
+
+<script>
+  /**
+   * Hover any theme cell → flip its pill into recording state. Leave → idle.
+   * The Pill component's animation script populates --lvl-N CSS vars in
+   * recording state, so the wave/bars animate as soon as we toggle.
+   */
+  document.querySelectorAll<HTMLElement>("[data-theme-cell]").forEach((cell) => {
+    const pill = cell.querySelector<HTMLElement>(".pill");
+    if (!pill) return;
+    cell.addEventListener("mouseenter", () => {
+      pill.dataset.state = "recording";
+    });
+    cell.addEventListener("mouseleave", () => {
+      pill.dataset.state = "idle";
+    });
+  });
+</script>
