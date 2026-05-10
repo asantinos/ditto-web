@@ -1,0 +1,245 @@
+---
+/**
+ * Mac waitlist — Formspree AJAX form. On success, the form's inner
+ * markup is swapped for a green confirmation pill (popped + checkmark
+ * draws). On failure, a red error block + auto-reload after 4s.
+ *
+ * Honeypot field _gotcha catches bots without showing them a captcha.
+ */
+---
+
+<div class="waitlist">
+  <div class="waitlist-info">
+    <h3>Get notified when Mac is ready</h3>
+    <p>We'll email you the day macOS support ships. No spam, ever.</p>
+  </div>
+  <form
+    class="waitlist-form"
+    id="mac-waitlist"
+    action="https://formspree.io/f/xeenplyr"
+    method="POST"
+  >
+    <input type="email" name="email" placeholder="you@example.com" required />
+    <input type="hidden" name="_subject" value="Ditto — Mac waitlist signup" />
+    <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" />
+    <button type="submit" class="waitlist-submit">Notify me</button>
+  </form>
+</div>
+
+<style>
+  .waitlist {
+    max-width: 920px;
+    margin: 0 auto 80px;
+    padding: 32px;
+    background: var(--color-surface);
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xs);
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+  .waitlist-info {
+    flex: 1;
+  }
+  .waitlist-info h3 {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    margin-bottom: 4px;
+  }
+  .waitlist-info p {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+  }
+  .waitlist-form {
+    display: flex;
+    gap: 8px;
+    position: relative;
+    transition:
+      opacity 280ms ease-out,
+      transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .waitlist-form input[type="email"] {
+    padding: 10px 14px;
+    font-size: 14px;
+    font-family: inherit;
+    border: 0.5px solid var(--color-border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-elevated);
+    width: 240px;
+    color: var(--color-text);
+  }
+  .waitlist-form input[type="email"]:focus {
+    outline: none;
+    border-color: var(--color-text);
+    background: var(--color-surface);
+  }
+  /* Honeypot — hidden from real users, visible to dumb bots */
+  .waitlist-form input[name="_gotcha"] {
+    display: none;
+  }
+  .waitlist-submit {
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    background: var(--color-accent);
+    color: #fff;
+    border: 0.5px solid transparent;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-xs);
+    transition: background 150ms ease-out, transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
+    letter-spacing: -0.01em;
+  }
+  .waitlist-submit:hover {
+    background: var(--color-accent-hover);
+    transform: translateY(-1px);
+  }
+
+  /* Submit-state visual feedback */
+  .waitlist-form[data-state="loading"] {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  .waitlist-form[data-state="success"],
+  .waitlist-form[data-state="error"] {
+    pointer-events: none;
+  }
+
+  /* Success / error swaps (markup injected by JS via innerHTML) */
+  .waitlist-form :global(.waitlist-success) {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    background: rgba(52, 199, 89, 0.08);
+    border: 0.5px solid rgba(52, 199, 89, 0.3);
+    border-radius: var(--radius-sm);
+    color: #1a8c3e;
+    font-size: 14px;
+    font-weight: 500;
+    animation: waitlist-pop 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .waitlist-form :global(.waitlist-success .check-circle) {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #34c759;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    animation: check-pop 500ms cubic-bezier(0.16, 1, 0.3, 1) 80ms both;
+  }
+  .waitlist-form :global(.waitlist-success .check-circle svg) {
+    width: 12px;
+    height: 12px;
+  }
+  .waitlist-form :global(.waitlist-success .check-circle path) {
+    stroke-dasharray: 12;
+    stroke-dashoffset: 12;
+    animation: check-draw 360ms cubic-bezier(0.65, 0, 0.35, 1) 200ms forwards;
+  }
+  .waitlist-form :global(.waitlist-error) {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    background: rgba(255, 59, 48, 0.06);
+    border: 0.5px solid rgba(255, 59, 48, 0.3);
+    color: #b8261b;
+    font-size: 13px;
+  }
+
+  @keyframes waitlist-pop {
+    0%   { opacity: 0; transform: translateY(6px) scale(0.96); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes check-pop {
+    0%   { transform: scale(0); }
+    60%  { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+  @keyframes check-draw {
+    to { stroke-dashoffset: 0; }
+  }
+
+  @media (max-width: 900px) {
+    .waitlist {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 24px;
+    }
+    .waitlist-form {
+      flex-direction: column;
+    }
+    .waitlist-form input[type="email"] {
+      width: 100%;
+    }
+  }
+  @media (max-width: 700px) {
+    .waitlist {
+      padding: 24px 20px;
+      gap: 16px;
+      margin: 0 16px 60px;
+    }
+    .waitlist-info h3 { font-size: 16px; }
+  }
+  @media (max-width: 480px) {
+    .waitlist {
+      padding: 20px 16px;
+      margin: 0 20px 48px;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Submit AJAX to Formspree, then swap inner markup for the success
+   * pill (or red error block + auto-reload). Does not redirect, the
+   * page stays put.
+   */
+  const macForm = document.getElementById("mac-waitlist") as HTMLFormElement | null;
+  if (macForm) {
+    macForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const state = macForm.dataset.state;
+      if (state === "success" || state === "loading") return;
+      macForm.dataset.state = "loading";
+
+      const formData = new FormData(macForm);
+      try {
+        const res = await fetch(macForm.action, {
+          method: "POST",
+          body: formData,
+          headers: { Accept: "application/json" },
+        });
+        if (!res.ok) throw new Error("Formspree returned " + res.status);
+
+        macForm.dataset.state = "success";
+        macForm.innerHTML = `
+          <div class="waitlist-success" role="status" aria-live="polite">
+            <span class="check-circle">
+              <svg viewBox="0 0 12 12" fill="none">
+                <path d="M2.5 6.2l2.4 2.3 4.6-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span>You're on the list. We'll email you when Mac ships.</span>
+          </div>
+        `;
+      } catch (err) {
+        macForm.dataset.state = "error";
+        macForm.innerHTML = `
+          <div class="waitlist-error" role="alert">
+            Couldn't sign you up. Try again in a moment.
+          </div>
+        `;
+        setTimeout(() => {
+          window.location.reload();
+        }, 4000);
+      }
+    });
+  }
+</script>

@@ -1,0 +1,158 @@
+---
+/**
+ * Two-card block on /download: Windows (active) + macOS (coming soon).
+ *
+ * Windows card: chrome download button + SHA-256 hash. Both URL and SHA
+ * hydrated dynamically by the GitHub fetch in Layout.astro; the
+ * hardcoded values here are the fallback if the API is unreachable.
+ *
+ * macOS card: disabled, dimmed, "Coming soon" badge. Email signup is
+ * handled by the WaitlistForm sibling component.
+ */
+import ChromeButton from "../ui/ChromeButton.astro";
+
+const RELEASES_LATEST = "https://github.com/asantinos/ditto/releases/latest";
+const FALLBACK_SHA = "26d448e2318aee1215e4b3dd05d5ba78e3c4f1ad2a356dea83eeca48dec3619b";
+---
+
+<div class="download-cards">
+  <!-- Windows -->
+  <div class="download-card">
+    <div class="download-os-icon" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M0 2.5L6.5 1.6V7.5H0V2.5zM7.2 1.5L16 0v7.5H7.2V1.5zM0 8.5h6.5v6L0 13.5V8.5zM7.2 8.5H16V16l-8.8-1.5V8.5z" />
+      </svg>
+    </div>
+    <div class="download-os-name">Windows</div>
+    <div class="download-os-meta">
+      <span class="js-release-version">v1.0.0</span> · <span class="js-release-size">525 MB</span> · Windows 10/11 (64-bit)
+    </div>
+    <ChromeButton href={RELEASES_LATEST} external release block>
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path
+          d="M8 2v9M5 8l3 3 3-3M3 14h10"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+      Download .exe
+    </ChromeButton>
+    <div class="download-checksum">
+      <strong>SHA-256:</strong> <span class="js-release-sha">{FALLBACK_SHA}</span>
+    </div>
+  </div>
+
+  <!-- macOS — coming soon -->
+  <div class="download-card" data-disabled="true">
+    <div class="download-os-icon" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 16 16" fill="currentColor">
+        <path
+          d="M11.182.008C11.148-.03 9.923.023 8.857 1.18c-1.066 1.156-.902 2.482-.878 2.516.024.034 1.52.087 2.475-1.258.955-1.345.762-2.391.728-2.43zm3.314 11.733c-.048-.096-2.325-1.234-2.113-3.422.212-2.189 1.675-2.789 1.698-2.854.023-.065-.597-.79-1.254-1.157a3.692 3.692 0 0 0-1.563-.434c-.108-.003-.483-.095-1.254.116-.508.139-1.653.589-1.968.607-.316.018-1.256-.522-2.267-.665-.647-.125-1.333.131-1.824.328-.49.196-1.422.754-2.074 2.237-.652 1.482-.311 3.83-.067 4.56.244.729.625 1.924 1.273 2.796.576.984 1.34 1.667 1.659 1.899.319.232 1.219.386 1.843.067.502-.308 1.408-.485 1.766-.472.357.013 1.061.154 1.782.539.571.197 1.111.115 1.652-.105.541-.221 1.324-1.059 2.238-2.758.347-.79.505-1.217.473-1.282z"
+        />
+      </svg>
+    </div>
+    <div class="download-os-name">
+      macOS <span class="download-soon">Coming soon</span>
+    </div>
+    <div class="download-os-meta">macOS 12+ (Apple Silicon &amp; Intel)</div>
+    <button class="btn-soon" type="button" disabled>Not yet available</button>
+  </div>
+</div>
+
+<style>
+  .download-cards {
+    max-width: 920px;
+    margin: 0 auto 80px;
+    padding: 0 32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .download-card {
+    background: var(--color-surface);
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: 32px 28px;
+    box-shadow: var(--shadow-sm);
+  }
+  .download-card[data-disabled="true"] {
+    opacity: 0.6;
+  }
+  .download-os-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--color-surface-alt);
+    border: 0.5px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+  }
+  .download-os-name {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .download-os-meta {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin-bottom: 24px;
+  }
+  .download-checksum {
+    margin-top: 16px;
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    font-family: var(--font-mono);
+    word-break: break-all;
+    line-height: 1.4;
+  }
+  .download-soon {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: var(--color-surface-alt);
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* Disabled "Not yet available" placeholder button */
+  .btn-soon {
+    width: 100%;
+    padding: 14px 24px;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--color-border-strong);
+    background: var(--color-surface);
+    color: var(--color-text-tertiary);
+    box-shadow: var(--shadow-xs);
+    cursor: not-allowed;
+    letter-spacing: -0.01em;
+  }
+
+  @media (max-width: 900px) {
+    .download-cards {
+      grid-template-columns: 1fr;
+      padding: 0 24px;
+    }
+  }
+  @media (max-width: 700px) {
+    .download-card { padding: 24px 20px; }
+  }
+  @media (max-width: 480px) {
+    .download-cards { padding: 0 20px; }
+    .download-card { padding: 20px 16px; }
+  }
+</style>

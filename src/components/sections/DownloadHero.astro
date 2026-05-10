@@ -1,0 +1,42 @@
+---
+/**
+ * Page header for /download — title + tagline. Smaller than the landing
+ * hero since the cards do most of the visual work below it.
+ */
+---
+
+<div class="download-hero">
+  <h1>Download <span class="display-italic">Ditto.</span></h1>
+  <p>Free, local, and private. Get started in two minutes.</p>
+</div>
+
+<style>
+  .download-hero {
+    max-width: 920px;
+    margin: 80px auto 0;
+    padding: 0 32px 80px;
+    text-align: center;
+  }
+  .download-hero h1 {
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    margin-bottom: 16px;
+  }
+  .download-hero p {
+    font-size: 17px;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 900px) {
+    .download-hero { padding: 60px 24px 60px; margin-top: 40px; }
+  }
+  @media (max-width: 700px) {
+    .download-hero { padding: 40px 24px 40px; }
+  }
+  @media (max-width: 480px) {
+    .download-hero { padding: 32px 20px 32px; }
+  }
+</style>

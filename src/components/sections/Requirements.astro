@@ -1,0 +1,83 @@
+---
+/**
+ * Two-column block at the bottom of /download — system requirements
+ * (left) and what's bundled (right). Plain bullet lists with a green
+ * ✓ marker before each item.
+ */
+
+const systemRequirements = [
+  "Windows 10 or 11, 64-bit",
+  "4 GB RAM minimum (8 GB recommended)",
+  "1 GB free disk space (more for larger models)",
+  "NVIDIA GPU optional (CUDA acceleration)",
+];
+
+const whatYouGet = [
+  "Bundled Whisper.cpp (no extra setup)",
+  "5 transcription models, downloaded on demand",
+  "Tray app, no window clutter",
+  "Auto-updates with stable / beta channels",
+];
+---
+
+<div class="requirements">
+  <div class="req-block">
+    <h3>System requirements</h3>
+    <ul>
+      {systemRequirements.map((item) => <li>{item}</li>)}
+    </ul>
+  </div>
+  <div class="req-block">
+    <h3>What you get</h3>
+    <ul>
+      {whatYouGet.map((item) => <li>{item}</li>)}
+    </ul>
+  </div>
+</div>
+
+<style>
+  .requirements {
+    max-width: 920px;
+    margin: 0 auto 100px;
+    padding: 0 32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+  }
+  .req-block h3 {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    margin-bottom: 14px;
+  }
+  .req-block ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .req-block li {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    padding-left: 24px;
+    position: relative;
+  }
+  .req-block li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--color-success);
+    font-weight: 600;
+  }
+
+  @media (max-width: 900px) {
+    .requirements {
+      grid-template-columns: 1fr;
+      gap: 32px;
+      padding: 0 24px;
+    }
+  }
+  @media (max-width: 480px) {
+    .requirements { padding: 0 20px; }
+  }
+</style>
