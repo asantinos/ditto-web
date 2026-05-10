@@ -1,0 +1,50 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Pill from "../../components/ui/Pill.astro";
+
+const themes = ["matte", "onyx", "aurora", "sunset", "mint"] as const;
+const states = ["idle", "recording", "transcribing"] as const;
+---
+
+<Layout title="Pill component preview" bare>
+  <main class="min-h-screen p-12 flex flex-col gap-16">
+    <header class="text-center">
+      <h1 class="text-4xl font-semibold tracking-tight mb-2">
+        Pill <span class="display-italic">component</span>
+      </h1>
+      <p class="text-text-secondary">
+        5 themes × 3 states. Recording state should animate.
+      </p>
+    </header>
+
+    <section class="grid gap-12">
+      {
+        themes.map((theme) => (
+          <div class="grid gap-4">
+            <h2 class="text-sm font-semibold uppercase tracking-wider text-text-tertiary">
+              {theme}
+            </h2>
+            <div class="flex items-center gap-12 p-8 bg-bg-elevated rounded-2xl border border-border">
+              {states.map((state) => (
+                <div class="flex flex-col items-center gap-3">
+                  <Pill theme={theme} state={state} id={`${theme}-${state}`} />
+                  <span class="text-xs text-text-tertiary">{state}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </section>
+
+    <section class="grid gap-4">
+      <h2 class="text-sm font-semibold uppercase tracking-wider text-text-tertiary">
+        Flat variant
+      </h2>
+      <div class="flex items-center gap-12 p-8 bg-bg-elevated rounded-2xl border border-border">
+        <Pill theme="matte" state="recording" flat id="flat-demo" />
+        <span class="text-xs text-text-tertiary">No outer shadow — only used inline in hero title</span>
+      </div>
+    </section>
+  </main>
+</Layout>
