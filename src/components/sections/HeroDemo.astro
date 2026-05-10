@@ -1,0 +1,541 @@
+---
+/**
+ * Hero demo — side-by-side comparator: typing manually (47s) vs Ditto (12s).
+ *
+ * Animated cycle, restartable via the reset button on the titlebar. The
+ * abortable sleep + AbortController pattern ensures the user can interrupt
+ * mid-cycle without leaving stale timers.
+ *
+ * On mobile (≤900px) the columns stack and the floating pill flows below
+ * the Ditto column rather than absolute-positioned over it.
+ */
+import Pill from "../ui/Pill.astro";
+---
+
+<div class="hero-demo">
+  <div class="hero-demo-window">
+    <div class="hero-demo-titlebar">
+      <div class="dots" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="url">notion.so/meeting-notes</div>
+      <button class="hero-demo-reset" type="button" id="hero-demo-reset" aria-label="Restart demo">
+        <svg viewBox="0 0 16 16" fill="none">
+          <path
+            d="M13 8a5 5 0 1 1-1.46-3.54M13 3v2.5h-2.5"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <div class="hero-demo-content">
+      <div class="demo-doc-meta-bar">
+        <div class="demo-doc-title-small">
+          <span>Q4 Planning · Meeting notes</span>
+          <span class="doc-dot" aria-hidden="true"></span>
+          <span>Draft</span>
+        </div>
+        <div class="demo-doc-meta-chars">~150 chars</div>
+      </div>
+
+      <div class="demo-split">
+        <!-- COLUMN: typing manually -->
+        <div class="demo-col" id="col-manual">
+          <div class="demo-col-header">
+            <div class="demo-col-label">
+              <span class="demo-col-icon">
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <rect x="2" y="4" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.4" />
+                  <path d="M4.5 7h1M7 7h1M9.5 7h1M4.5 10h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+                </svg>
+              </span>
+              Typing manually
+            </div>
+            <div class="demo-col-time" id="time-manual">0:00</div>
+          </div>
+          <div class="demo-col-text">
+            <span id="text-manual"></span><span class="demo-cursor-mini" aria-hidden="true"></span>
+          </div>
+        </div>
+
+        <!-- COLUMN: with Ditto -->
+        <div class="demo-col" id="col-ditto">
+          <div class="demo-col-header">
+            <div class="demo-col-label">
+              <span class="demo-col-icon">
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <rect x="6" y="2" width="4" height="7" rx="2" stroke="currentColor" stroke-width="1.4" />
+                  <path d="M3.5 7.5a4.5 4.5 0 0 0 9 0M8 12v2M5.5 14h5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+                </svg>
+              </span>
+              With Ditto
+            </div>
+            <div class="demo-col-time" id="time-ditto">0:00</div>
+          </div>
+          <div class="demo-col-text">
+            <span id="text-ditto"></span><span class="demo-cursor-mini" aria-hidden="true"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating pill — absolute on desktop, in-flow on mobile -->
+      <div class="hero-demo-pill-stage">
+        <Pill theme="matte" state="idle" id="hero-demo-pill" class="hero-demo-pill" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .hero-demo {
+    max-width: 1080px;
+    margin: 0 auto 120px;
+    padding: 0 32px;
+    position: relative;
+  }
+
+  .hero-demo-window {
+    background: var(--color-surface);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-lg);
+    border: 0.5px solid var(--color-border);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .hero-demo-titlebar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 18px;
+    border-bottom: 0.5px solid var(--color-border);
+    background: linear-gradient(180deg, #fafafb, #f2f2f4);
+  }
+  .hero-demo-titlebar .dots {
+    display: flex;
+    gap: 6px;
+  }
+  .hero-demo-titlebar .dots span {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+  }
+  .hero-demo-titlebar .dots span:nth-child(1) { background: #ff5f57; }
+  .hero-demo-titlebar .dots span:nth-child(2) { background: #febc2e; }
+  .hero-demo-titlebar .dots span:nth-child(3) { background: #28c840; }
+  .hero-demo-titlebar .url {
+    margin-left: 16px;
+    padding: 4px 14px;
+    background: var(--color-surface);
+    border: 0.5px solid var(--color-border);
+    border-radius: 6px;
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    font-family: var(--font-mono);
+  }
+
+  .hero-demo-reset {
+    margin-left: auto;
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: var(--color-text-quaternary);
+    border-radius: 6px;
+    cursor: pointer;
+    transition:
+      color 200ms ease,
+      background 200ms ease,
+      transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .hero-demo-reset:hover {
+    color: var(--color-text-secondary);
+    background: rgba(0, 0, 0, 0.04);
+  }
+  .hero-demo-reset:active {
+    transform: rotate(-360deg);
+    transition-duration: 600ms;
+  }
+  .hero-demo-reset svg { width: 13px; height: 13px; }
+
+  .hero-demo-content {
+    padding: 32px 32px 80px;
+    min-height: 460px;
+    background: linear-gradient(180deg, #ffffff, #fbfbfc);
+    position: relative;
+  }
+
+  .demo-doc-meta-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .demo-doc-title-small {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .demo-doc-title-small .doc-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-text-quaternary);
+  }
+  .demo-doc-meta-chars {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-text-secondary);
+  }
+
+  .demo-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .demo-col {
+    background: var(--color-surface);
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-xs);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-height: 280px;
+    transition: all 350ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .demo-col.winner {
+    border-color: rgba(52, 199, 89, 0.4);
+    box-shadow:
+      0 0 0 0.5px rgba(52, 199, 89, 0.3),
+      0 0 0 4px rgba(52, 199, 89, 0.06),
+      var(--shadow-sm);
+  }
+  .demo-col-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding-bottom: 12px;
+    border-bottom: 0.5px solid var(--color-border);
+  }
+  .demo-col-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .demo-col-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: var(--color-surface-alt);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-secondary);
+  }
+  .demo-col.winner .demo-col-icon {
+    background: rgba(52, 199, 89, 0.12);
+    color: #1a8c3e;
+  }
+  .demo-col-time {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text);
+    font-variant-numeric: tabular-nums;
+    padding: 3px 9px;
+    background: var(--color-surface-alt);
+    border-radius: 6px;
+  }
+  .demo-col.winner .demo-col-time {
+    background: rgba(52, 199, 89, 0.12);
+    color: #1a8c3e;
+  }
+  .demo-col.loser .demo-col-time {
+    text-decoration: line-through;
+    color: var(--color-text-tertiary);
+  }
+  .demo-col-text {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--color-text);
+    flex: 1;
+    min-height: 180px;
+  }
+  /* :global so the JS-injected spans are styled */
+  .demo-col-text :global(.typed-manual) {
+    background: rgba(255, 149, 0, 0.08);
+    border-bottom: 1px dashed rgba(255, 149, 0, 0.4);
+  }
+  .demo-col-text :global(.typed-ditto) {
+    background: rgba(52, 199, 89, 0.18);
+    padding: 1px 3px;
+    border-radius: 3px;
+    transition: background 1500ms ease-out 1500ms;
+  }
+  .demo-col-text :global(.typed-ditto.fade) {
+    background: rgba(0, 102, 204, 0.05);
+  }
+  .demo-cursor-mini {
+    display: inline-block;
+    width: 1.5px;
+    height: 1em;
+    background: var(--color-text);
+    vertical-align: text-bottom;
+    animation: cursor-blink 1s steps(1) infinite;
+    margin-left: 1px;
+  }
+  .demo-col.done .demo-cursor-mini { display: none; }
+  @keyframes cursor-blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  /* Floating pill, anchored under the Ditto column on desktop */
+  .hero-demo-pill-stage {
+    position: absolute;
+    bottom: 36px;
+    left: 75%;
+    transform: translateX(-50%);
+    z-index: 10;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .hero-demo {
+      padding: 0 16px;
+      margin-bottom: 80px;
+    }
+    .hero-demo-content {
+      padding: 24px 20px 56px;
+      min-height: auto;
+    }
+    .demo-split {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .hero-demo-pill-stage {
+      position: static;
+      transform: none;
+      display: flex;
+      justify-content: center;
+      margin: 24px auto 16px;
+    }
+  }
+  @media (max-width: 700px) {
+    .hero-demo-titlebar { padding: 10px 14px; }
+    .hero-demo-titlebar .url {
+      font-size: 10px;
+      padding: 3px 10px;
+    }
+    .demo-col {
+      padding: 14px 16px;
+      min-height: 160px;
+      gap: 10px;
+    }
+    .demo-col-text {
+      min-height: 120px;
+      font-size: 13px;
+    }
+    .demo-col-label { font-size: 11px; }
+    .demo-col-time {
+      font-size: 12px;
+      padding: 2px 7px;
+    }
+  }
+  @media (max-width: 480px) {
+    .hero-demo { padding: 0 12px; }
+    .hero-demo-content { padding: 18px 14px 48px; }
+    .hero-demo-titlebar {
+      padding: 8px 12px;
+      gap: 6px;
+    }
+    .hero-demo-titlebar .url { font-size: 9.5px; }
+    .demo-col {
+      padding: 12px 14px;
+      min-height: 140px;
+    }
+    .demo-col-text {
+      min-height: 100px;
+      font-size: 12.5px;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Demo cycle: typing manually (47s) vs Ditto (~12s) — looping with
+   * abortable sleeps so the reset button can interrupt mid-cycle.
+   */
+  const TIME_MANUAL_TOTAL = 47;
+  const TIME_DITTO_TOTAL = 12;
+  const RECORDING_DURATION = 10;
+  const TRANSCRIBING_DURATION = 1.2;
+  const transcribedText =
+    "First, we need to ship the new onboarding flow before the end of June. Second, we'll be hiring two more engineers to support customer growth.";
+
+  const demoPill = document.getElementById("hero-demo-pill");
+  const textManual = document.getElementById("text-manual");
+  const textDitto = document.getElementById("text-ditto");
+  const timeManualEl = document.getElementById("time-manual");
+  const timeDittoEl = document.getElementById("time-ditto");
+  const colManual = document.getElementById("col-manual");
+  const colDitto = document.getElementById("col-ditto");
+
+  if (
+    demoPill &&
+    textManual &&
+    textDitto &&
+    timeManualEl &&
+    timeDittoEl &&
+    colManual &&
+    colDitto
+  ) {
+    function fmt(seconds: number): string {
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60);
+      return `${m}:${s.toString().padStart(2, "0")}`;
+    }
+    function setColState(col: HTMLElement, state: "winner" | "loser" | null) {
+      col.classList.remove("winner", "loser", "done");
+      if (state) col.classList.add(state);
+    }
+
+    let demoAbort: AbortController | null = null;
+
+    function sleep(ms: number): Promise<void> {
+      return new Promise((resolve, reject) => {
+        const signal = demoAbort?.signal;
+        if (signal && signal.aborted) {
+          return reject(new DOMException("aborted", "AbortError"));
+        }
+        const t = setTimeout(resolve, ms);
+        if (signal) {
+          signal.addEventListener(
+            "abort",
+            () => {
+              clearTimeout(t);
+              reject(new DOMException("aborted", "AbortError"));
+            },
+            { once: true },
+          );
+        }
+      });
+    }
+
+    async function runDemoCycle() {
+      while (true) {
+        let tickInterval: ReturnType<typeof setInterval> | null = null;
+        try {
+          // RESET
+          demoPill!.dataset.state = "idle";
+          textManual!.innerHTML = "";
+          textDitto!.innerHTML = "";
+          timeManualEl!.textContent = "0:00";
+          timeDittoEl!.textContent = "0:00";
+          setColState(colManual!, null);
+          setColState(colDitto!, null);
+          await sleep(2000);
+
+          const cycleStart = performance.now();
+          let dittoStopTime = 0;
+          let dittoFinished = false;
+
+          const charDelay = (TIME_MANUAL_TOTAL * 1000) / transcribedText.length;
+          let manualIdx = 0;
+
+          demoPill!.dataset.state = "recording";
+
+          tickInterval = setInterval(() => {
+            const elapsed = (performance.now() - cycleStart) / 1000;
+
+            const manualTime = Math.min(elapsed, TIME_MANUAL_TOTAL);
+            timeManualEl!.textContent = fmt(manualTime);
+
+            const targetIdx = Math.min(
+              Math.floor((elapsed * 1000) / charDelay),
+              transcribedText.length,
+            );
+            if (targetIdx > manualIdx) {
+              manualIdx = targetIdx;
+              textManual!.innerHTML =
+                '<span class="typed-manual">' +
+                transcribedText.slice(0, manualIdx).replace(/</g, "&lt;") +
+                "</span>";
+            }
+
+            if (!dittoFinished) {
+              const dittoTime = Math.min(elapsed, TIME_DITTO_TOTAL);
+              timeDittoEl!.textContent = fmt(dittoTime);
+            }
+
+            if (manualTime >= TIME_MANUAL_TOTAL && dittoFinished) {
+              setColState(colDitto!, "winner");
+              colDitto!.classList.add("done");
+              setColState(colManual!, "loser");
+              colManual!.classList.add("done");
+            }
+          }, 100);
+
+          await sleep(RECORDING_DURATION * 1000);
+
+          demoPill!.dataset.state = "transcribing";
+          await sleep(TRANSCRIBING_DURATION * 1000);
+
+          textDitto!.innerHTML =
+            '<span class="typed-ditto">' + transcribedText + "</span>";
+          const dittoElapsed = (performance.now() - cycleStart) / 1000;
+          dittoStopTime = Math.min(dittoElapsed, TIME_DITTO_TOTAL);
+          timeDittoEl!.textContent = fmt(dittoStopTime);
+          dittoFinished = true;
+          demoPill!.dataset.state = "idle";
+
+          await sleep(2000);
+          const dittoSpan = textDitto!.querySelector(".typed-ditto");
+          if (dittoSpan) dittoSpan.classList.add("fade");
+
+          const remainingTime = (TIME_MANUAL_TOTAL - dittoStopTime - 2) * 1000;
+          if (remainingTime > 0) await sleep(remainingTime);
+
+          clearInterval(tickInterval);
+          tickInterval = null;
+
+          await sleep(4000);
+        } catch (e) {
+          if (tickInterval) clearInterval(tickInterval);
+          if (e instanceof DOMException && e.name === "AbortError") return;
+          throw e;
+        }
+      }
+    }
+
+    function startDemo() {
+      if (demoAbort) demoAbort.abort();
+      demoAbort = new AbortController();
+      runDemoCycle();
+    }
+
+    startDemo();
+
+    const resetBtn = document.getElementById("hero-demo-reset");
+    if (resetBtn) resetBtn.addEventListener("click", startDemo);
+  }
+</script>

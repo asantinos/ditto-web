@@ -1,0 +1,184 @@
+---
+/**
+ * Landing hero — header content above the fold.
+ *
+ * Title embeds a flat pill inline (CLAUDE.md §5.1, .pill-flat variant).
+ * Subtitle, CTAs (chrome + ghost), and meta line with version/size hydrated
+ * by the GitHub fetch.
+ */
+import Pill from "../ui/Pill.astro";
+import ChromeButton from "../ui/ChromeButton.astro";
+import GhostLink from "../ui/GhostLink.astro";
+
+const RELEASES_LATEST = "https://github.com/asantinos/ditto/releases/latest";
+---
+
+<header class="hero">
+  <div class="hero-tag">
+    <span class="hero-tag-dot" aria-hidden="true"></span>
+    Now in beta · Windows
+  </div>
+
+  <h1 class="hero-title">
+    Your voice,
+    <span class="pill-inline">
+      <Pill theme="matte" state="recording" flat id="hero-title" />
+    </span>
+    typed <span class="display-italic">everywhere</span>.
+  </h1>
+
+  <p class="hero-subtitle">
+    Press a shortcut, speak, and Ditto types into whatever app you're using. Local, private, fast.
+  </p>
+
+  <div class="hero-actions">
+    <ChromeButton href={RELEASES_LATEST} external release>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path
+          d="M8 2v9M5 8l3 3 3-3M3 14h10"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+      Download for Windows
+    </ChromeButton>
+    <GhostLink href="#how">See how it works</GhostLink>
+  </div>
+
+  <div class="hero-meta">
+    <span>Free, no account required</span>
+    <span class="dot" aria-hidden="true"></span>
+    <span>
+      <span class="js-release-version">v1.0.0</span> · <span class="js-release-size">525 MB</span>
+    </span>
+    <span class="dot" aria-hidden="true"></span>
+    <span>Windows 10/11</span>
+  </div>
+</header>
+
+<style>
+  .hero {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 32px 0;
+    text-align: center;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: var(--color-surface);
+    border: 0.5px solid var(--color-border);
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    box-shadow: var(--shadow-xs);
+    margin-bottom: 32px;
+  }
+  .hero-tag-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-success);
+    box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.15);
+  }
+
+  .hero-title {
+    font-size: clamp(40px, 6.5vw, 78px);
+    line-height: 1.1;
+    letter-spacing: -0.035em;
+    font-weight: 600;
+    margin-bottom: 28px;
+    max-width: 920px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .pill-inline {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    margin: 0 12px;
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+
+  .hero-subtitle {
+    font-size: clamp(16px, 1.5vw, 19px);
+    line-height: 1.5;
+    color: var(--color-text-secondary);
+    max-width: 540px;
+    margin: 0 auto 36px;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--color-text-tertiary);
+    margin-bottom: 80px;
+  }
+  .hero-meta .dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--color-text-quaternary);
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .hero { padding: 64px 24px 0; }
+    .hero-meta { margin-bottom: 60px; }
+  }
+  @media (max-width: 700px) {
+    .hero { padding: 48px 24px 0; }
+    .hero-tag {
+      padding: 5px 12px;
+      font-size: 11px;
+      margin-bottom: 24px;
+    }
+    .hero-actions {
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+    .hero-actions :global(.btn-chrome),
+    .hero-actions :global(.btn-ghost-link) {
+      width: 100%;
+      justify-content: center;
+    }
+    .hero-meta {
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 11px;
+      margin-bottom: 48px;
+    }
+    .pill-inline {
+      transform: scale(0.72);
+      margin: 0 4px;
+    }
+  }
+  @media (max-width: 480px) {
+    .hero { padding: 36px 20px 0; }
+    .pill-inline {
+      transform: scale(0.6);
+      margin: 0 2px;
+    }
+  }
+</style>
