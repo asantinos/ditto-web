@@ -1,0 +1,195 @@
+---
+/**
+ * Site header. Sticky, transparent — content scrolls under it.
+ *
+ * Right side: GitHub button (icon + dynamic stars) and Download CTA.
+ * On mobile, Download collapses to an icon-only square pill.
+ *
+ * The stars count and Download URL are populated dynamically by the
+ * GitHub fetch in Layout.astro. Until the API responds, the stars span
+ * shows a subtle skeleton shimmer.
+ */
+import Logo from "../ui/Logo.astro";
+
+const REPO_URL = "https://github.com/asantinos/ditto";
+const RELEASES_LATEST = `${REPO_URL}/releases/latest`;
+---
+
+<nav class="nav">
+  <div class="nav-inner">
+    <Logo />
+
+    <div class="nav-actions">
+      <a class="btn-github" href={REPO_URL} target="_blank" rel="noopener" aria-label="View on GitHub">
+        <svg class="gh-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
+        </svg>
+        <span class="js-gh-stars" />
+        <svg class="gh-star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2l2.9 6.9 7.6.6-5.8 5 1.7 7.4L12 18l-6.4 3.9L7.3 14.5 1.5 9.5l7.6-.6L12 2z" />
+        </svg>
+      </a>
+
+      <a class="btn-download-nav js-release-link" href={RELEASES_LATEST} target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path
+            d="M8 2v9m0 0L4 7m4 4l4-4M2.5 13.5h11"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <span class="btn-download-label">Download</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: transparent;
+  }
+  .nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 32px 16px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+  }
+
+  /* GitHub button — pill-shaped, light surface */
+  .btn-github {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--color-surface);
+    border: 0.5px solid var(--color-border-strong);
+    border-radius: 999px;
+    box-shadow:
+      0 0 0 0.5px rgba(0, 0, 0, 0.04),
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 4px 12px rgba(0, 0, 0, 0.06);
+    transition:
+      transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 250ms ease-out;
+    color: var(--color-text);
+    font-size: 13.5px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.005em;
+  }
+  .btn-github:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      0 0 0 0.5px rgba(0, 0, 0, 0.06),
+      0 2px 6px rgba(0, 0, 0, 0.06),
+      0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+  .gh-icon {
+    width: 15px;
+    height: 15px;
+    display: block;
+  }
+  .gh-star {
+    width: 12px;
+    height: 12px;
+    color: var(--color-warning);
+    margin-left: 2px;
+  }
+
+  /* Stars skeleton — shown while empty */
+  .js-gh-stars:empty {
+    display: inline-block;
+    width: 22px;
+    height: 10px;
+    border-radius: 3px;
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.06) 0%,
+      rgba(0, 0, 0, 0.12) 50%,
+      rgba(0, 0, 0, 0.06) 100%
+    );
+    background-size: 200% 100%;
+    animation: gh-skeleton 1.2s ease-in-out infinite;
+    vertical-align: middle;
+  }
+  @keyframes gh-skeleton {
+    0%   { background-position: 100% 0; }
+    100% { background-position: -100% 0; }
+  }
+
+  /* Download — dark glass pill */
+  .btn-download-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: rgba(20, 20, 22, 0.78);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 0.5px solid rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    box-shadow:
+      0 0 0 0.5px rgba(0, 0, 0, 0.4),
+      0 8px 24px rgba(0, 0, 0, 0.25),
+      0 16px 48px rgba(0, 0, 0, 0.18);
+    color: #fff;
+    font-size: 13.5px;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    transition:
+      transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 250ms ease-out;
+  }
+  .btn-download-nav:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      0 0 0 0.5px rgba(0, 0, 0, 0.5),
+      0 12px 28px rgba(0, 0, 0, 0.3),
+      0 20px 56px rgba(0, 0, 0, 0.22);
+  }
+  .btn-download-nav svg {
+    width: 14px;
+    height: 14px;
+    opacity: 0.85;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .nav-inner { gap: 20px; padding: 28px 24px 14px; }
+  }
+  @media (max-width: 700px) {
+    .nav-inner { padding: 12px 24px 8px; gap: 12px; }
+    .nav-actions { gap: 8px; }
+    .btn-download-nav {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      gap: 0;
+      justify-content: center;
+    }
+    .btn-download-nav svg { width: 15px; height: 15px; opacity: 0.95; }
+    .btn-download-label { display: none; }
+  }
+  @media (max-width: 480px) {
+    .nav-inner { padding: 10px 20px 6px; }
+    .btn-github { padding: 8px 11px; font-size: 12px; gap: 6px; }
+    .btn-github .gh-icon { width: 13px; height: 13px; }
+    .btn-github .gh-star { width: 11px; height: 11px; }
+    .btn-download-nav { width: 32px; height: 32px; }
+    .btn-download-nav svg { width: 14px; height: 14px; }
+    .nav-actions { gap: 6px; }
+  }
+</style>
