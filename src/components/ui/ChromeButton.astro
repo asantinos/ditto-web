@@ -1,0 +1,152 @@
+---
+/**
+ * Silver chrome button — Y2K-inspired CTA reserved for download actions only.
+ *
+ * Per CLAUDE.md §5.4: don't reuse outside download CTAs (hero + download
+ * page). Has a sheen ::before + a specular highlight ::after that sweeps
+ * across on hover (700ms).
+ */
+
+interface Props {
+  href: string;
+  /** External link / opens in new tab. Forwarded as target="_blank" rel="noopener". */
+  external?: boolean;
+  /** Marks the link as a release link the GH fetch can hydrate. */
+  release?: boolean;
+  /** "block" stretches to 100% width (used inside narrow cards). */
+  block?: boolean;
+  class?: string;
+}
+
+const {
+  href,
+  external = false,
+  release = false,
+  block = false,
+  class: className = "",
+} = Astro.props;
+
+const externalAttrs = external ? { target: "_blank", rel: "noopener" } : {};
+---
+
+<a
+  href={href}
+  class:list={["btn-chrome", { "btn-chrome-block": block, "js-release-link": release }, className]}
+  {...externalAttrs}
+>
+  <slot />
+</a>
+
+<style>
+  .btn-chrome {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px 28px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: #1d1d1f;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    overflow: hidden;
+    isolation: isolate;
+    background: linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #f5f5f8 18%,
+      #d8d8dd 50%,
+      #b8b8c0 51%,
+      #d4d4d9 80%,
+      #eeeef1 100%
+    );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 1),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+      inset 0 0 0 0.5px rgba(0, 0, 0, 0.15),
+      0 1px 1px rgba(0, 0, 0, 0.04),
+      0 2px 6px rgba(0, 0, 0, 0.08),
+      0 8px 20px rgba(0, 0, 0, 0.12);
+    transition:
+      transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 250ms ease-out,
+      background 350ms ease-out;
+  }
+  .btn-chrome::before {
+    content: "";
+    position: absolute;
+    top: 1px;
+    left: 8%;
+    right: 8%;
+    height: 45%;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0.55) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    border-radius: 12px 12px 60% 60% / 12px 12px 100% 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .btn-chrome::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 70%;
+    height: 100%;
+    background: linear-gradient(
+      115deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0) 40%,
+      rgba(255, 255, 255, 0.65) 50%,
+      rgba(255, 255, 255, 0) 60%,
+      transparent 100%
+    );
+    transform: skewX(-20deg);
+    pointer-events: none;
+    z-index: 2;
+    transition: left 700ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .btn-chrome :global(*) {
+    position: relative;
+    z-index: 3;
+  }
+  .btn-chrome:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #fafafd 18%,
+      #e2e2e8 50%,
+      #c8c8d0 51%,
+      #e0e0e6 80%,
+      #f5f5f8 100%
+    );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 1),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+      inset 0 0 0 0.5px rgba(0, 0, 0, 0.18),
+      0 2px 4px rgba(0, 0, 0, 0.06),
+      0 6px 14px rgba(0, 0, 0, 0.12),
+      0 14px 32px rgba(0, 0, 0, 0.18);
+  }
+  .btn-chrome:hover::after {
+    left: 130%;
+  }
+  .btn-chrome:active {
+    transform: translateY(0);
+    box-shadow:
+      inset 0 1px 2px rgba(0, 0, 0, 0.18),
+      inset 0 0 0 0.5px rgba(0, 0, 0, 0.2),
+      0 1px 1px rgba(0, 0, 0, 0.04);
+  }
+
+  .btn-chrome-block {
+    width: 100%;
+  }
+</style>

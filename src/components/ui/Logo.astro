@@ -1,0 +1,62 @@
+---
+/**
+ * Ditto wordmark with mini pill icon. Reused in header and footer.
+ *
+ * Renders as a link by default (href="/"). Pass `as="div"` to render as
+ * a static element (used in the footer brand block where the wordmark
+ * shouldn't be a duplicate link to /).
+ */
+
+interface Props {
+  as?: "a" | "div";
+  href?: string;
+  size?: "sm" | "md";
+  class?: string;
+}
+
+const {
+  as = "a",
+  href = "/",
+  size = "md",
+  class: className = "",
+} = Astro.props;
+---
+
+{
+  as === "a" ? (
+    <a href={href} class:list={["logo", `logo-${size}`, className]}>
+      <span class="logo-pill" aria-hidden="true" />
+      <span>Ditto</span>
+    </a>
+  ) : (
+    <div class:list={["logo", `logo-${size}`, className]}>
+      <span class="logo-pill" aria-hidden="true" />
+      <span>Ditto</span>
+    </div>
+  )
+}
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+  }
+  .logo-md { font-size: 16px; }
+  .logo-sm { font-size: 14px; }
+
+  .logo-pill {
+    width: 32px;
+    height: 16px;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #ffffff, #ececee);
+    box-shadow:
+      0 0 0 0.5px rgba(0, 0, 0, 0.08),
+      0 2px 4px rgba(0, 0, 0, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 1);
+    flex-shrink: 0;
+  }
+</style>

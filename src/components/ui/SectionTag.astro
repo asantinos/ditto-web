@@ -1,0 +1,40 @@
+---
+/**
+ * Small uppercase mono badge sitting above a section title.
+ * Used by every secondary section on the landing.
+ */
+interface Props {
+  class?: string;
+}
+const { class: className = "" } = Astro.props;
+---
+
+<div class:list={["section-tag", className]}>
+  <slot />
+</div>
+
+<style>
+  .section-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    background: var(--color-surface);
+    border: 0.5px solid var(--color-border);
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-xs);
+    font-family: var(--font-mono);
+  }
+
+  @media (max-width: 700px) {
+    .section-tag {
+      font-size: 11px;
+      padding: 5px 11px;
+    }
+  }
+</style>

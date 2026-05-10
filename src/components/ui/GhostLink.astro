@@ -1,0 +1,73 @@
+---
+/**
+ * Secondary CTA link — text + optional arrow that nudges right on hover.
+ * Used as the "softer" alternative next to the chrome download button.
+ */
+
+interface Props {
+  href: string;
+  /** Show a right arrow that translates 2px on hover. Default true. */
+  arrow?: boolean;
+  class?: string;
+}
+
+const { href, arrow = true, class: className = "" } = Astro.props;
+---
+
+<a href={href} class:list={["btn-ghost-link", className]}>
+  <slot />
+  {
+    arrow && (
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path
+          d="M3 8h10M9 4l4 4-4 4"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    )
+  }
+</a>
+
+<style>
+  .btn-ghost-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 8px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    background: none;
+    border: none;
+    box-shadow: none;
+    letter-spacing: -0.01em;
+    transition: color 150ms ease-out;
+    position: relative;
+  }
+  .btn-ghost-link::after {
+    content: "";
+    position: absolute;
+    bottom: 10px;
+    left: 8px;
+    right: 8px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+  }
+  .btn-ghost-link:hover {
+    color: var(--color-text);
+  }
+  .btn-ghost-link:hover::after {
+    opacity: 0.6;
+  }
+  .btn-ghost-link svg {
+    transition: transform 200ms ease-out;
+  }
+  .btn-ghost-link:hover svg {
+    transform: translateX(2px);
+  }
+</style>
