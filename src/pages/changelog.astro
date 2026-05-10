@@ -1,0 +1,77 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import ReleaseEntry from "../components/sections/ReleaseEntry.astro";
+
+// Newest first, by date. Dates come pre-coerced from the schema.
+const releases = (await getCollection("changelog")).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+---
+
+<Layout title="Changelog — Ditto">
+  <div class="changelog">
+    <header class="changelog-header">
+      <h1>Changelog</h1>
+      <p>What's new, what's improved, what's fixed.</p>
+    </header>
+
+    {
+      releases.map((release, i) => (
+        <ReleaseEntry
+          version={release.data.version}
+          date={release.data.date}
+          badge={release.data.badge}
+          title={release.data.title}
+          added={release.data.added}
+          improved={release.data.improved}
+          fixed={release.data.fixed}
+          isLast={i === releases.length - 1}
+        />
+      ))
+    }
+  </div>
+</Layout>
+
+<style>
+  .changelog {
+    max-width: 760px;
+    margin: 80px auto 100px;
+    padding: 0 32px;
+  }
+  .changelog-header {
+    text-align: center;
+    margin-bottom: 64px;
+  }
+  .changelog-header h1 {
+    font-size: 48px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    margin-bottom: 12px;
+  }
+  .changelog-header p {
+    font-size: 16px;
+    color: var(--color-text-secondary);
+  }
+
+  @media (max-width: 700px) {
+    .changelog {
+      margin: 32px auto 56px;
+      padding: 0 24px;
+    }
+    .changelog-header {
+      margin-bottom: 40px;
+    }
+    .changelog-header h1 {
+      font-size: clamp(32px, 8vw, 40px);
+    }
+    .changelog-header p {
+      font-size: 14px;
+    }
+  }
+  @media (max-width: 480px) {
+    .changelog {
+      padding: 0 20px;
+    }
+  }
+</style>

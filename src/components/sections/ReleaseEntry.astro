@@ -1,0 +1,217 @@
+---
+/**
+ * Single changelog release card. Timeline-style with a dot on the left
+ * and a vertical line connecting to the next entry.
+ *
+ * Renders ADDED / IMPROVED / FIXED groups conditionally — each shows
+ * only when its frontmatter array exists and has items.
+ */
+
+interface Props {
+  version: string;
+  date: Date;
+  badge: "major" | "minor" | "patch";
+  title: string;
+  added?: string[];
+  improved?: string[];
+  fixed?: string[];
+  /** Last entry skips the vertical timeline line. */
+  isLast?: boolean;
+}
+
+const {
+  version,
+  date,
+  badge,
+  title,
+  added,
+  improved,
+  fixed,
+  isLast = false,
+} = Astro.props;
+
+// "May 10, 2026" — full month, day, year. Locale-stable for an EN-default site.
+const formattedDate = date.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+
+const badgeLabel = badge.charAt(0).toUpperCase() + badge.slice(1);
+---
+
+<article class:list={["release", { "release-last": isLast }]}>
+  <div class="release-meta">
+    <span class:list={["release-tag", `release-tag-${badge}`]}>{badgeLabel}</span>
+    <span>{formattedDate}</span>
+  </div>
+  <div class="release-version">{version}</div>
+  <div class="release-name">{title}</div>
+
+  {
+    added && added.length > 0 && (
+      <div class="release-group release-group-added">
+        <h4>Added</h4>
+        <ul>
+          {added.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+
+  {
+    improved && improved.length > 0 && (
+      <div class="release-group release-group-improved">
+        <h4>Improved</h4>
+        <ul>
+          {improved.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+
+  {
+    fixed && fixed.length > 0 && (
+      <div class="release-group release-group-fixed">
+        <h4>Fixed</h4>
+        <ul>
+          {fixed.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+</article>
+
+<style>
+  .release {
+    position: relative;
+    padding-left: 32px;
+    padding-bottom: 56px;
+    border-left: 0.5px solid var(--color-border);
+  }
+  .release-last {
+    border-left: 0.5px solid transparent;
+  }
+  .release::before {
+    content: "";
+    position: absolute;
+    left: -5px;
+    top: 8px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--color-surface);
+    border: 1.5px solid var(--color-text);
+  }
+
+  .release-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    color: var(--color-text-tertiary);
+  }
+  .release-tag {
+    padding: 3px 9px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .release-tag-major { background: rgba(255, 59, 48, 0.1); color: #ff3b30; }
+  .release-tag-minor { background: var(--color-info-soft); color: var(--color-info); }
+  .release-tag-patch { background: rgba(52, 199, 89, 0.1); color: var(--color-success); }
+
+  .release-version {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+  }
+  .release-name {
+    font-size: 15px;
+    color: var(--color-text-secondary);
+    font-style: italic;
+    margin-bottom: 24px;
+  }
+
+  .release-group {
+    margin-bottom: 20px;
+  }
+  .release-group h4 {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .release-group-added h4 { color: var(--color-success); }
+  .release-group-improved h4 { color: var(--color-info); }
+  .release-group-fixed h4 { color: var(--color-warning); }
+
+  .release-group ul {
+    list-style: none;
+    padding: 0;
+  }
+  .release-group li {
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 4px 0 4px 20px;
+    position: relative;
+  }
+  .release-group li::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--color-text-quaternary);
+  }
+
+  @media (max-width: 700px) {
+    .release {
+      padding-left: 22px;
+      padding-bottom: 40px;
+    }
+    .release::before {
+      top: 6px;
+    }
+    .release-meta {
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .release-tag {
+      font-size: 10px;
+      padding: 2px 8px;
+    }
+    .release-version {
+      font-size: 20px;
+    }
+    .release-name {
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+    .release-group {
+      margin-bottom: 16px;
+    }
+    .release-group li {
+      font-size: 13.5px;
+      padding-left: 16px;
+    }
+  }
+  @media (max-width: 480px) {
+    .release {
+      padding-left: 18px;
+      padding-bottom: 32px;
+    }
+    .release-version {
+      font-size: 19px;
+    }
+  }
+</style>
