@@ -2,22 +2,68 @@
 /**
  * Site header. Sticky, transparent — content scrolls under it.
  *
- * Right side: GitHub button (icon + dynamic stars) and Download CTA.
- * On mobile, Download collapses to an icon-only square pill.
+ * Three zones in a grid (1fr auto 1fr):
+ *  - Logo on the left
+ *  - Page-nav pill (Home / Download / Docs / Changelog) in the middle
+ *  - GitHub stars + Download button on the right
  *
- * The stars count and Download URL are populated dynamically by the
- * GitHub fetch in Layout.astro. Until the API responds, the stars span
- * shows a subtle skeleton shimmer.
+ * The nav pill auto-marks the active item from the current path. /docs/*
+ * uses prefix matching so the active state survives all 13 doc pages.
+ *
+ * Mobile (≤700): nav pill collapses to icons-only. Below 480px it hides
+ * entirely — primary nav lives in the Footer at that point.
  */
 import Logo from "../ui/Logo.astro";
 
 const REPO_URL = "https://github.com/asantinos/ditto";
 const RELEASES_LATEST = `${REPO_URL}/releases/latest`;
+
+const path = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === "/docs" ? path.startsWith("/docs") : path === href;
+
+const navItems = [
+  {
+    href: "/",
+    label: "Home",
+    icon: '<path d="M2.5 7.5L8 2.5l5.5 5M4 6.5V13h8V6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>',
+  },
+  {
+    href: "/download",
+    label: "Download",
+    icon: '<path d="M8 2v8m0 0L4.5 6.5M8 10l3.5-3.5M2.5 13.5h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>',
+  },
+  {
+    href: "/docs",
+    label: "Docs",
+    icon: '<path d="M3.5 2.5h6L12.5 5.5v8h-9zM9.5 2.5v3h3M5.5 8h5M5.5 10.5h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>',
+  },
+  {
+    href: "/changelog",
+    label: "Changelog",
+    icon: '<circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v3l2 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>',
+  },
+];
 ---
 
 <nav class="nav">
   <div class="nav-inner">
     <Logo />
+
+    <div class="page-nav" aria-label="Primary">
+      {
+        navItems.map((item) => (
+          <a
+            href={item.href}
+            class:list={[{ active: isActive(item.href) }]}
+            aria-current={isActive(item.href) ? "page" : undefined}
+          >
+            <svg viewBox="0 0 16 16" fill="none" set:html={item.icon} aria-hidden="true" />
+            <span>{item.label}</span>
+          </a>
+        ))
+      }
+    </div>
 
     <div class="nav-actions">
       <a class="btn-github" href={REPO_URL} target="_blank" rel="noopener" aria-label="View on GitHub">
@@ -53,11 +99,17 @@ const RELEASES_LATEST = `${REPO_URL}/releases/latest`;
     z-index: 100;
     background: transparent;
   }
+  /*
+   * Grid 1fr auto 1fr keeps the middle nav perfectly centered regardless
+   * of the widths of Logo (left) and Actions (right). Right column is
+   * justified-end so Actions hug the right edge.
+   */
   .nav-inner {
     max-width: 1200px;
     margin: 0 auto;
     padding: 32px 32px 16px;
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
     gap: 32px;
   }
@@ -65,7 +117,60 @@ const RELEASES_LATEST = `${REPO_URL}/releases/latest`;
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-left: auto;
+    justify-self: end;
+  }
+
+  /* PAGE NAV — pill-shaped white glass with 4 items */
+  .page-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 4px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 0.5px solid var(--color-border-strong);
+    border-radius: 999px;
+    box-shadow:
+      0 0 0 0.5px rgba(0, 0, 0, 0.04),
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 8px 24px rgba(0, 0, 0, 0.08),
+      0 16px 48px rgba(0, 0, 0, 0.06);
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+  }
+  .page-nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    color: var(--color-text-secondary);
+    transition:
+      color 180ms ease-out,
+      background 180ms ease-out;
+  }
+  .page-nav a svg {
+    width: 13px;
+    height: 13px;
+    opacity: 0.75;
+  }
+  .page-nav a:hover {
+    color: var(--color-text);
+  }
+  .page-nav a:hover svg {
+    opacity: 1;
+  }
+  .page-nav a.active {
+    background: #fff;
+    color: var(--color-text);
+    box-shadow:
+      0 0 0 0.5px rgba(0, 0, 0, 0.06),
+      0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  .page-nav a.active svg {
+    opacity: 1;
   }
 
   /* GitHub button — pill-shaped, light surface */
@@ -169,6 +274,14 @@ const RELEASES_LATEST = `${REPO_URL}/releases/latest`;
   /* Responsive */
   @media (max-width: 1024px) {
     .nav-inner { gap: 20px; padding: 28px 24px 14px; }
+    .page-nav a { padding: 7px 12px; }
+  }
+  @media (max-width: 900px) {
+    /* Collapse labels — icons only */
+    .page-nav a span { display: none; }
+    .page-nav a { padding: 9px 11px; gap: 0; }
+    .page-nav a svg { width: 16px; height: 16px; opacity: 0.85; }
+    .page-nav a.active svg { opacity: 1; }
   }
   @media (max-width: 700px) {
     .nav-inner { padding: 12px 24px 8px; gap: 12px; }
@@ -182,6 +295,12 @@ const RELEASES_LATEST = `${REPO_URL}/releases/latest`;
     }
     .btn-download-nav svg { width: 15px; height: 15px; opacity: 0.95; }
     .btn-download-label { display: none; }
+  }
+  @media (max-width: 580px) {
+    /* No room for the pill alongside logo + actions — hide it. Footer
+       and in-context links cover primary nav at this width. */
+    .nav-inner { grid-template-columns: auto 1fr; gap: 8px; }
+    .page-nav { display: none; }
   }
   @media (max-width: 480px) {
     .nav-inner { padding: 10px 20px 6px; }
