@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://dittoapp.com/sitemap-index.xml
+Sitemap: https://dittotalks.com/sitemap-index.xml
