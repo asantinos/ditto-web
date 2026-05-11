@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <!-- Fondo: gradiente radial onyx hacia el centro -->
+        <radialGradient id="bg-onyx-radial" cx="50%" cy="50%" r="70%">
+          <stop offset="0%" stop-color="#3a3a3e"/>
+          <stop offset="50%" stop-color="#26262a"/>
+          <stop offset="100%" stop-color="#131316"/>
+        </radialGradient>
+
+        <!-- Pill matte (clara sobre fondo oscuro) -->
+        <linearGradient id="pill-bg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FFFFFF"/>
+          <stop offset="30%" stop-color="#FAFAFB"/>
+          <stop offset="70%" stop-color="#EFEFF1"/>
+          <stop offset="100%" stop-color="#E8E8EA"/>
+        </linearGradient>
+        <linearGradient id="pill-highlight-top" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0"/>
+          <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.95"/>
+          <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+        </linearGradient>
+
+        <!-- Sombra exterior dramática para destacar la pill clara sobre el fondo oscuro -->
+        <filter id="pill-shadow" x="-30%" y="-30%" width="160%" height="200%">
+          <feGaussianBlur stdDeviation="28"/>
+        </filter>
+      </defs>
+
+      <!-- Background con gradiente radial -->
+      <rect width="1200" height="630" fill="url(#bg-onyx-radial)"/>
+
+      <!-- Bloque central: pill + tagline + footer, todo agrupado y centrado verticalmente.
+           Altura total del bloque ≈ 410px (pill 154 + gap 60 + tagline 150 + gap 40 + footer 16).
+           Para centrar en 630px: y inicial = (630 - 410) / 2 = 110.
+           Coloco el grupo con translate(0, 110). -->
+      <g transform="translate(0, 110)">
+
+        <!-- PILL MATTE PROTAGONISTA -->
+        <g transform="translate(425, 0)">
+          <!-- Sombra exterior con la forma real de la pill, blurreada -->
+          <rect x="-10" y="40" width="370" height="154" rx="77" fill="#000000" opacity="0.5" filter="url(#pill-shadow)"/>
+          <rect x="0" y="20" width="350" height="154" rx="77" fill="#000000" opacity="0.4" filter="url(#pill-shadow)"/>
+
+          <!-- Body de la pill -->
+          <rect x="0" y="0" width="350" height="154" rx="77" fill="url(#pill-bg)"/>
+
+          <!-- Borde sutil -->
+          <rect x="0" y="0" width="350" height="154" rx="77" fill="none"
+                stroke="#000000" stroke-opacity="0.15" stroke-width="0.5"/>
+
+          <!-- Highlight inset top -->
+          <ellipse cx="175" cy="3.5" rx="105" ry="3" fill="url(#pill-highlight-top)"/>
+
+          <!-- Inset highlight body -->
+          <rect x="0" y="0" width="350" height="154" rx="77" fill="none"
+                stroke="#FFFFFF" stroke-width="3" stroke-opacity="0.6"/>
+
+          <!-- Texto "Ditto" debossed -->
+          <text x="175" y="89" text-anchor="middle"
+                font-family="-apple-system, SF Pro Display, Inter, system-ui"
+                font-size="42" font-weight="600" letter-spacing="-0.02em"
+                fill="#C8C8CC">Ditto</text>
+          <text x="175" y="88" text-anchor="middle"
+                font-family="-apple-system, SF Pro Display, Inter, system-ui"
+                font-size="42" font-weight="600" letter-spacing="-0.02em"
+                fill="#FFFFFF" opacity="0.6">Ditto</text>
+        </g>
+
+        <!-- TAGLINE principal -->
+        <text x="600" y="250" text-anchor="middle"
+              font-family="-apple-system, SF Pro Display, Inter, system-ui"
+              font-size="64" font-weight="600" letter-spacing="-0.025em"
+              fill="#FAFAFB">
+          Your voice, typed
+        </text>
+        <text x="600" y="325" text-anchor="middle"
+              font-family="Times New Roman, Iowan Old Style, Georgia, serif"
+              font-style="italic" font-size="64" font-weight="500" letter-spacing="-0.03em"
+              fill="#FAFAFB">
+          everywhere.
+        </text>
+
+        <!-- Footer: dominio + meta -->
+        <text x="600" y="395" text-anchor="middle"
+              font-family="-apple-system, SF Pro Display, Inter, system-ui"
+              font-size="16" font-weight="500" letter-spacing="0.04em"
+              fill="#8E8E93">
+          DITTOTALKS.COM   ·   100% LOCAL &amp; FREE
+        </text>
+
+      </g>
+    </svg>
