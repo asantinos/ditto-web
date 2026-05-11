@@ -284,7 +284,16 @@ const navItems = [
     .page-nav a.active svg { opacity: 1; }
   }
   @media (max-width: 700px) {
-    .nav-inner { padding: 12px 24px 8px; gap: 12px; }
+    .nav-inner {
+      padding: 12px 24px 8px;
+      gap: 12px;
+      /*
+       * Drop the pill out of the header grid — at this width it floats
+       * fixed at the bottom of the viewport (bottom dock pattern). The
+       * header becomes Logo + Actions, two columns.
+       */
+      grid-template-columns: auto 1fr;
+    }
     .nav-actions { gap: 8px; }
     .btn-download-nav {
       width: 36px;
@@ -295,12 +304,17 @@ const navItems = [
     }
     .btn-download-nav svg { width: 15px; height: 15px; opacity: 0.95; }
     .btn-download-label { display: none; }
-  }
-  @media (max-width: 580px) {
-    /* No room for the pill alongside logo + actions — hide it. Footer
-       and in-context links cover primary nav at this width. */
-    .nav-inner { grid-template-columns: auto 1fr; gap: 8px; }
-    .page-nav { display: none; }
+
+    /* Page-nav becomes a floating bottom dock */
+    .page-nav {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      padding: 3px;
+    }
+    .page-nav a { padding: 9px 11px; }
   }
   @media (max-width: 480px) {
     .nav-inner { padding: 10px 20px 6px; }
@@ -310,5 +324,7 @@ const navItems = [
     .btn-download-nav { width: 32px; height: 32px; }
     .btn-download-nav svg { width: 14px; height: 14px; }
     .nav-actions { gap: 6px; }
+    .page-nav { bottom: 12px; padding: 3px; }
+    .page-nav a { padding: 8px 10px; }
   }
 </style>
