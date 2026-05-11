@@ -2,12 +2,11 @@
 /**
  * Custom 404. Astro auto-serves this file on any unknown route.
  *
- * Keeps the brand: a big aurora pill at the top, plain "Page not
- * found" headline, two actions (back to home + browse docs). Tone
- * is friendly, not snarky.
+ * Composition: 404 mono badge → "lost" headline → friendly paragraph
+ * → primary "Back to home" + ghost "Browse docs". Header + Footer
+ * come from Layout.
  */
 import Layout from "../layouts/Layout.astro";
-import Pill from "../components/ui/Pill.astro";
 import GhostLink from "../components/ui/GhostLink.astro";
 ---
 
@@ -16,10 +15,6 @@ import GhostLink from "../components/ui/GhostLink.astro";
   description="The page you're looking for doesn't exist. Head back to the home page or browse the docs."
 >
   <main class="not-found">
-    <div class="pill-stage">
-      <Pill theme="aurora" state="idle" id="not-found" />
-    </div>
-
     <div class="badge">404</div>
     <h1>This page got <span class="display-italic">lost</span>.</h1>
     <p>
@@ -28,7 +23,7 @@ import GhostLink from "../components/ui/GhostLink.astro";
     </p>
 
     <div class="actions">
-      <a class="btn-home" href="/">Back to home</a>
+      <a class="btn-primary" href="/">Back to home</a>
       <GhostLink href="/docs">Browse the docs</GhostLink>
     </div>
   </main>
@@ -38,24 +33,18 @@ import GhostLink from "../components/ui/GhostLink.astro";
   .not-found {
     max-width: 640px;
     margin: 0 auto;
-    padding: 80px 32px 120px;
+    padding: 140px 32px 160px;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  .pill-stage {
-    display: inline-flex;
-    transform: scale(1.5);
-    transform-origin: center;
-    margin-bottom: 56px;
-  }
-
+  /* 404 badge — same mono-uppercase pattern as .section-tag */
   .badge {
     display: inline-flex;
     align-items: center;
-    padding: 5px 12px;
+    padding: 6px 14px;
     background: var(--color-surface);
     border: 0.5px solid var(--color-border);
     border-radius: 100px;
@@ -65,68 +54,73 @@ import GhostLink from "../components/ui/GhostLink.astro";
     color: var(--color-text-secondary);
     letter-spacing: 0.12em;
     box-shadow: var(--shadow-xs);
-    margin-bottom: 20px;
+    margin-bottom: 24px;
   }
 
   h1 {
-    font-size: clamp(36px, 5vw, 56px);
+    font-size: clamp(40px, 6vw, 64px);
     font-weight: 600;
     letter-spacing: -0.025em;
     line-height: 1.1;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
   }
 
   p {
-    font-size: 16px;
+    font-size: 17px;
     line-height: 1.55;
     color: var(--color-text-secondary);
-    max-width: 460px;
+    max-width: 480px;
     margin: 0 auto 36px;
   }
 
   .actions {
     display: flex;
-    gap: 12px;
+    gap: 8px;
     align-items: center;
     flex-wrap: wrap;
     justify-content: center;
   }
 
-  .btn-home {
+  /*
+   * Primary button — dark accent pill. Mirrors the .btn .btn-primary
+   * pattern from the original mockup (CLAUDE.md §1 site-wide accent).
+   * Sized between .btn (default) and .btn-lg.
+   */
+  .btn-primary {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    gap: 8px;
     padding: 12px 22px;
     background: var(--color-accent);
     color: #fff;
     border: 0.5px solid transparent;
     border-radius: var(--radius-md);
+    box-shadow: var(--shadow-xs);
     font-size: 14px;
     font-weight: 500;
     letter-spacing: -0.01em;
-    box-shadow: var(--shadow-xs);
     transition:
       background 150ms ease-out,
-      transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+      transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 200ms ease-out;
   }
-  .btn-home:hover {
+  .btn-primary:hover {
     background: var(--color-accent-hover);
     transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
   }
 
   /* Responsive */
   @media (max-width: 700px) {
     .not-found {
-      padding: 56px 24px 80px;
-    }
-    .pill-stage {
-      transform: scale(1.2);
-      margin-bottom: 40px;
+      padding: 100px 24px 120px;
     }
     .actions {
       flex-direction: column;
       width: 100%;
     }
-    .btn-home,
+    .btn-primary,
     .actions :global(.btn-ghost-link) {
       width: 100%;
       justify-content: center;
@@ -134,10 +128,7 @@ import GhostLink from "../components/ui/GhostLink.astro";
   }
   @media (max-width: 480px) {
     .not-found {
-      padding: 40px 20px 64px;
-    }
-    .pill-stage {
-      transform: scale(1.05);
+      padding: 72px 20px 96px;
     }
   }
 </style>
