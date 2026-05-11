@@ -27,6 +27,15 @@ const {
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
 
+    <!-- Auto-discoverable feeds + sitemap -->
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Ditto Changelog"
+      href="/changelog.xml"
+    />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
     <!-- Caveat: cursive labels in How-it-works connectors (CLAUDE.md §5.5) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
