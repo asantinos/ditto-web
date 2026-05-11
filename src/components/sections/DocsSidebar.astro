@@ -228,6 +228,10 @@ const activeTitle = activeDoc?.data.title ?? "Docs";
 
   /* MOBILE — sticky bar with collapsible popover */
   @media (max-width: 900px) {
+    .docs-search-trigger {
+      /* Sticky bar already provides its own gap below */
+      margin-bottom: 0;
+    }
     .docs-sidebar {
       position: sticky;
       top: 80px;
@@ -369,6 +373,10 @@ const activeTitle = activeDoc?.data.title ?? "Docs";
     position: relative;
     width: 100%;
     max-width: 640px;
+    /* Cap panel height so the modal never exceeds the viewport */
+    max-height: calc(100vh - 24vh);
+    display: flex;
+    flex-direction: column;
     background: var(--color-surface);
     border: 0.5px solid var(--color-border);
     border-radius: var(--radius-lg);
@@ -385,6 +393,45 @@ const activeTitle = activeDoc?.data.title ?? "Docs";
   }
   .docs-search-pagefind {
     padding: 14px 16px 4px;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    /* Clip any overflow at the container; the inner results scroll instead. */
+    overflow: hidden;
+  }
+  /*
+   * Pagefind UI renders <pagefind-ui> → form (input) + drawer/results.
+   * Pin the form, let the rest grow + scroll. !important is required
+   * because Pagefind's own Svelte-scoped rules (.pagefind-ui__*.svelte-XXX)
+   * have equal/higher specificity than our :global() overrides.
+   */
+  .docs-search-pagefind :global(.pagefind-ui) {
+    flex: 1 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .docs-search-pagefind :global(.pagefind-ui form),
+  .docs-search-pagefind :global(.pagefind-ui__form) {
+    flex-shrink: 0 !important;
+  }
+  /*
+   * Single scroll container — the outermost one. Inner nested regions
+   * must NOT scroll, otherwise the browser stacks scrollbars (drawer +
+   * results-area = two scrollbars).
+   */
+  .docs-search-pagefind :global(.pagefind-ui__drawer) {
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    max-height: 60vh;
+  }
+  .docs-search-pagefind :global(.pagefind-ui__results-area),
+  .docs-search-pagefind :global(.pagefind-ui__results) {
+    overflow: visible !important;
+    max-height: none !important;
   }
   .docs-search-footer {
     display: flex;
