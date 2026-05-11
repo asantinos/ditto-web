@@ -43,7 +43,27 @@ const activeTitle = activeDoc?.data.title ?? "Docs";
   <script src="/pagefind/pagefind-ui.js" is:inline></script>
 
   <div class="docs-sidebar-bar">
-    <div class="docs-search" id="docs-search"></div>
+    <!--
+      Search trigger: looks like an input but it's a button that opens the
+      modal. Real Pagefind UI lives inside the modal further down.
+    -->
+    <button
+      class="docs-search-trigger"
+      type="button"
+      id="docs-search-trigger"
+      aria-label="Search docs"
+      aria-haspopup="dialog"
+    >
+      <svg class="search-icon" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.4" />
+        <path d="M9.5 9.5l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+      </svg>
+      <span class="placeholder">Search docs…</span>
+      <kbd class="kbd-hint" aria-hidden="true">
+        <span class="kbd-cmd">⌘</span><span class="kbd-ctrl">Ctrl</span>K
+      </kbd>
+    </button>
+
     <button
       class="docs-current-page"
       type="button"
@@ -83,6 +103,30 @@ const activeTitle = activeDoc?.data.title ?? "Docs";
   </nav>
 </aside>
 
+<!--
+  Search modal. Lives outside the sidebar so its overlay covers the
+  whole viewport. Hidden by default; opened by the trigger button or
+  Ctrl/Cmd+K, closed by ESC, backdrop click, or any link selection.
+-->
+<div
+  class="docs-search-modal"
+  id="docs-search-modal"
+  data-open="false"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Search documentation"
+  hidden
+>
+  <div class="docs-search-backdrop" data-close-modal></div>
+  <div class="docs-search-panel" role="document">
+    <div class="docs-search-pagefind" id="docs-search"></div>
+    <div class="docs-search-footer">
+      <span><kbd>↵</kbd> to open</span>
+      <span><kbd>esc</kbd> to close</span>
+    </div>
+  </div>
+</div>
+
 <style>
   /* Desktop sidebar */
   .docs-sidebar {
@@ -90,38 +134,58 @@ const activeTitle = activeDoc?.data.title ?? "Docs";
     top: 80px;
     height: fit-content;
   }
-  .docs-search {
+  /*
+   * Search TRIGGER — looks like an input but it's a <button> that opens
+   * the modal. The real Pagefind input lives inside the modal.
+   */
+  .docs-search-trigger {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     width: 100%;
-    padding: 9px 14px 9px 36px;
-    font-family: inherit;
-    font-size: 13px;
+    padding: 9px 12px;
+    margin-bottom: 24px;
     background: var(--color-surface);
     border: 0.5px solid var(--color-border);
     border-radius: var(--radius-sm);
     box-shadow: var(--shadow-xs);
-    color: var(--color-text);
-    margin-bottom: 24px;
-    background-image: url("data:image/svg+xml,%3Csvg width='14' height='14' viewBox='0 0 14 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='6' cy='6' r='4.5' stroke='%238E8E93' stroke-width='1.4'/%3E%3Cpath d='M9.5 9.5l3 3' stroke='%238E8E93' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: 12px center;
+    color: var(--color-text-tertiary);
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color 150ms ease-out;
   }
-  .docs-search:focus {
-    outline: none;
-    border-color: var(--color-text);
+  .docs-search-trigger:hover {
+    border-color: var(--color-border-strong);
   }
-  .docs-search::-webkit-search-cancel-button,
-  .docs-search::-webkit-search-decoration,
-  .docs-search::-webkit-search-results-button,
-  .docs-search::-webkit-search-results-decoration {
-    -webkit-appearance: none;
-    appearance: none;
-    display: none;
+  .docs-search-trigger .search-icon {
+    width: 14px;
+    height: 14px;
+    color: var(--color-text-tertiary);
+    flex-shrink: 0;
   }
-  .docs-search::-ms-clear {
-    display: none;
-    width: 0;
-    height: 0;
+  .docs-search-trigger .placeholder {
+    flex: 1;
+    text-align: left;
   }
+  .docs-search-trigger .kbd-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 1px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--color-text-tertiary);
+    background: var(--color-surface-alt);
+    border: 0.5px solid var(--color-border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  /* Show ⌘ on Mac, Ctrl elsewhere */
+  .docs-search-trigger .kbd-cmd { display: none; }
+  .docs-search-trigger[data-platform="mac"] .kbd-cmd { display: inline; }
+  .docs-search-trigger[data-platform="mac"] .kbd-ctrl { display: none; }
 
   /* Hide the mobile-only "current page" trigger on desktop */
   .docs-sidebar-bar {
@@ -186,8 +250,6 @@ const activeTitle = activeDoc?.data.title ?? "Docs";
     }
     .docs-search {
       width: 100%;
-      padding: 9px 14px 9px 36px;
-      font-size: 13px;
       margin-bottom: 0;
     }
     .docs-current-page {
@@ -278,13 +340,83 @@ const activeTitle = activeDoc?.data.title ?? "Docs";
   }
 
   /* ============================================================
+   * SEARCH MODAL — appears centered with a blurred backdrop
+   * ============================================================ */
+  .docs-search-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 12vh 16px 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 180ms ease-out;
+  }
+  .docs-search-modal[data-open="true"] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .docs-search-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(20, 20, 22, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .docs-search-panel {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    background: var(--color-surface);
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow:
+      0 0 0 0.5px rgba(0, 0, 0, 0.04),
+      0 20px 60px rgba(0, 0, 0, 0.25),
+      0 8px 24px rgba(0, 0, 0, 0.12);
+    transform: translateY(-8px) scale(0.98);
+    transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+  }
+  .docs-search-modal[data-open="true"] .docs-search-panel {
+    transform: translateY(0) scale(1);
+  }
+  .docs-search-pagefind {
+    padding: 14px 16px 4px;
+  }
+  .docs-search-footer {
+    display: flex;
+    gap: 16px;
+    padding: 10px 16px;
+    border-top: 0.5px solid var(--color-border);
+    background: var(--color-bg-elevated);
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+  }
+  .docs-search-footer kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    margin-right: 6px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--color-text-secondary);
+    background: var(--color-surface);
+    border: 0.5px solid var(--color-border);
+    border-radius: 4px;
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+  }
+
+  /* ============================================================
    * PAGEFIND UI overrides — match Ditto's design tokens
    * The .pagefind-ui_* class names are public API from Pagefind v1.
    * ============================================================ */
-  .docs-search {
-    margin-bottom: 24px;
-  }
-  .docs-search :global(.pagefind-ui) {
+  .docs-search-pagefind :global(.pagefind-ui) {
     --pagefind-ui-scale: 0.8;
     --pagefind-ui-primary: var(--color-text);
     --pagefind-ui-text: var(--color-text);
@@ -295,37 +427,37 @@ const activeTitle = activeDoc?.data.title ?? "Docs";
     --pagefind-ui-border-radius: var(--radius-sm);
     --pagefind-ui-font: var(--font-sans);
   }
-  .docs-search :global(.pagefind-ui__search-input) {
+  .docs-search-pagefind :global(.pagefind-ui__search-input) {
     font-family: var(--font-sans);
     font-size: 13px;
     box-shadow: var(--shadow-xs);
   }
   /* Hide the clear (×) button that Pagefind injects */
-  .docs-search :global(.pagefind-ui__search-clear) {
+  .docs-search-pagefind :global(.pagefind-ui__search-clear) {
     display: none;
   }
   /* Drop the results UI a little tighter */
-  .docs-search :global(.pagefind-ui__results) {
+  .docs-search-pagefind :global(.pagefind-ui__results) {
     margin-top: 12px;
   }
-  .docs-search :global(.pagefind-ui__result) {
+  .docs-search-pagefind :global(.pagefind-ui__result) {
     border-bottom: 0.5px solid var(--color-border);
     padding: 10px 0;
   }
-  .docs-search :global(.pagefind-ui__result:last-child) {
+  .docs-search-pagefind :global(.pagefind-ui__result:last-child) {
     border-bottom: none;
   }
-  .docs-search :global(.pagefind-ui__result-title a) {
+  .docs-search-pagefind :global(.pagefind-ui__result-title a) {
     font-size: 13.5px;
     font-weight: 500;
     color: var(--color-text);
   }
-  .docs-search :global(.pagefind-ui__result-excerpt) {
+  .docs-search-pagefind :global(.pagefind-ui__result-excerpt) {
     font-size: 12.5px;
     color: var(--color-text-secondary);
     line-height: 1.5;
   }
-  .docs-search :global(.pagefind-ui__result-excerpt mark) {
+  .docs-search-pagefind :global(.pagefind-ui__result-excerpt mark) {
     background: rgba(255, 149, 0, 0.18);
     color: var(--color-text);
     padding: 0 2px;
@@ -357,22 +489,98 @@ const activeTitle = activeDoc?.data.title ?? "Docs";
       }
     });
   }
-</script>
 
-<script is:inline>
   /**
-   * Pagefind UI bootstrap. Runs after pagefind-ui.js loads (from
-   * /pagefind/, generated at build time). In dev mode the script
-   * 404s and PagefindUI is undefined — guarded below.
+   * Search modal: open/close behaviour.
+   *  - Click the trigger or press Ctrl/Cmd+K to open.
+   *  - Press Esc, click backdrop, or click a result to close.
+   *  - Locks <body> scroll while open.
+   * The Pagefind UI is initialized lazily on first open (deferred so the
+   * pagefind-ui.js script has time to load before we instantiate it).
    */
-  window.addEventListener("DOMContentLoaded", () => {
-    if (typeof window.PagefindUI !== "function") return;
-    new window.PagefindUI({
+  const trigger = document.getElementById("docs-search-trigger");
+  const modal = document.getElementById("docs-search-modal");
+  let pagefindInitialised = false;
+
+  function isMac() {
+    return /Mac|iPhone|iPad/.test(navigator.platform);
+  }
+
+  if (trigger) {
+    if (isMac()) trigger.dataset.platform = "mac";
+  }
+
+  function ensurePagefind() {
+    if (pagefindInitialised) return;
+    const PagefindUI = (window as any).PagefindUI;
+    if (typeof PagefindUI !== "function") {
+      // In dev mode /pagefind/pagefind-ui.js 404s. Skip silently — search
+      // becomes available in production builds.
+      return;
+    }
+    new PagefindUI({
       element: "#docs-search",
       showSubResults: false,
       showImages: false,
       resetStyles: false,
       placeholder: "Search docs…",
     });
+    pagefindInitialised = true;
+  }
+
+  function openModal() {
+    if (!modal) return;
+    modal.hidden = false;
+    requestAnimationFrame(() => {
+      modal.dataset.open = "true";
+    });
+    document.body.style.overflow = "hidden";
+    ensurePagefind();
+    // Focus the Pagefind input on next tick so it exists in the DOM.
+    setTimeout(() => {
+      const input = modal.querySelector<HTMLInputElement>(".pagefind-ui__search-input");
+      input?.focus();
+    }, 60);
+  }
+
+  function closeModal() {
+    if (!modal) return;
+    modal.dataset.open = "false";
+    document.body.style.overflow = "";
+    // Wait for the transition to finish before re-hiding from a11y tree.
+    setTimeout(() => {
+      if (modal.dataset.open === "false") modal.hidden = true;
+    }, 200);
+  }
+
+  trigger?.addEventListener("click", openModal);
+
+  modal?.addEventListener("click", (e) => {
+    const target = e.target as HTMLElement;
+    if (target.dataset.closeModal !== undefined) {
+      closeModal();
+      return;
+    }
+    // Closing on result selection: pagefind links inside the modal navigate
+    // away by themselves, but make sure we hide the overlay before nav.
+    if (target.closest(".pagefind-ui__result-link, .pagefind-ui__result-title a")) {
+      closeModal();
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modal?.dataset.open === "true") {
+      e.preventDefault();
+      closeModal();
+      return;
+    }
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+      e.preventDefault();
+      if (modal?.dataset.open === "true") {
+        closeModal();
+      } else {
+        openModal();
+      }
+    }
   });
 </script>
