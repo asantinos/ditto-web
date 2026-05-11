@@ -25,8 +25,12 @@ const { title, subtitle, section } = doc.data;
 <div class="docs-layout">
   <DocsSidebar docs={allDocs} activeSlug={doc.id} />
 
-  <article class="docs-content">
-    <div class="docs-breadcrumb">
+  <article
+    class="docs-content"
+    data-pagefind-body
+    data-pagefind-meta={`section:${section}`}
+  >
+    <div class="docs-breadcrumb" data-pagefind-ignore>
       Docs / {section} / <span class="docs-breadcrumb-current">{title}</span>
     </div>
 
@@ -35,7 +39,7 @@ const { title, subtitle, section } = doc.data;
 
     <slot />
 
-    <div class="docs-edit">
+    <div class="docs-edit" data-pagefind-ignore>
       <a
         href={`https://github.com/asantinos/ditto-web/edit/main/src/content/docs/${doc.id}.mdx`}
         target="_blank"

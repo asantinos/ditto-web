@@ -33,13 +33,17 @@ const activeTitle = activeDoc?.data.title ?? "Docs";
 ---
 
 <aside class="docs-sidebar" id="docs-sidebar" data-open="false">
+  <!--
+    Pagefind CSS + bootstrap. The .js file is generated at build time
+    (npm run build runs `pagefind --site dist`) and lives at
+    /pagefind/pagefind-ui.js. In `npm run dev` these 404 silently and
+    the search renders as a disabled fallback — that's expected.
+  -->
+  <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+  <script src="/pagefind/pagefind-ui.js" is:inline></script>
+
   <div class="docs-sidebar-bar">
-    <input
-      type="search"
-      class="docs-search"
-      placeholder="Search docs…"
-      aria-label="Search docs"
-    />
+    <div class="docs-search" id="docs-search"></div>
     <button
       class="docs-current-page"
       type="button"
@@ -272,6 +276,61 @@ const activeTitle = activeDoc?.data.title ?? "Docs";
   @media (max-width: 480px) {
     .docs-sidebar { top: 60px; }
   }
+
+  /* ============================================================
+   * PAGEFIND UI overrides — match Ditto's design tokens
+   * The .pagefind-ui_* class names are public API from Pagefind v1.
+   * ============================================================ */
+  .docs-search {
+    margin-bottom: 24px;
+  }
+  .docs-search :global(.pagefind-ui) {
+    --pagefind-ui-scale: 0.8;
+    --pagefind-ui-primary: var(--color-text);
+    --pagefind-ui-text: var(--color-text);
+    --pagefind-ui-background: var(--color-surface);
+    --pagefind-ui-border: var(--color-border);
+    --pagefind-ui-tag: var(--color-surface-alt);
+    --pagefind-ui-border-width: 0.5px;
+    --pagefind-ui-border-radius: var(--radius-sm);
+    --pagefind-ui-font: var(--font-sans);
+  }
+  .docs-search :global(.pagefind-ui__search-input) {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    box-shadow: var(--shadow-xs);
+  }
+  /* Hide the clear (×) button that Pagefind injects */
+  .docs-search :global(.pagefind-ui__search-clear) {
+    display: none;
+  }
+  /* Drop the results UI a little tighter */
+  .docs-search :global(.pagefind-ui__results) {
+    margin-top: 12px;
+  }
+  .docs-search :global(.pagefind-ui__result) {
+    border-bottom: 0.5px solid var(--color-border);
+    padding: 10px 0;
+  }
+  .docs-search :global(.pagefind-ui__result:last-child) {
+    border-bottom: none;
+  }
+  .docs-search :global(.pagefind-ui__result-title a) {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--color-text);
+  }
+  .docs-search :global(.pagefind-ui__result-excerpt) {
+    font-size: 12.5px;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+  .docs-search :global(.pagefind-ui__result-excerpt mark) {
+    background: rgba(255, 149, 0, 0.18);
+    color: var(--color-text);
+    padding: 0 2px;
+    border-radius: 2px;
+  }
 </style>
 
 <script>
@@ -298,4 +357,22 @@ const activeTitle = activeDoc?.data.title ?? "Docs";
       }
     });
   }
+</script>
+
+<script is:inline>
+  /**
+   * Pagefind UI bootstrap. Runs after pagefind-ui.js loads (from
+   * /pagefind/, generated at build time). In dev mode the script
+   * 404s and PagefindUI is undefined — guarded below.
+   */
+  window.addEventListener("DOMContentLoaded", () => {
+    if (typeof window.PagefindUI !== "function") return;
+    new window.PagefindUI({
+      element: "#docs-search",
+      showSubResults: false,
+      showImages: false,
+      resetStyles: false,
+      placeholder: "Search docs…",
+    });
+  });
 </script>
