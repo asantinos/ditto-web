@@ -18,7 +18,9 @@ import Logo from "../ui/Logo.astro";
 const REPO_URL = "https://github.com/asantinos/ditto";
 const RELEASES_LATEST = `${REPO_URL}/releases/latest`;
 
-const path = Astro.url.pathname;
+// Normalize trailing slash so '/download/' (Astro's build output) matches
+// '/download' (the href we wrote). '/' stays as '/'.
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 const isActive = (href: string) =>
   href === "/docs" ? path.startsWith("/docs") : path === href;
 
