@@ -24,9 +24,20 @@ const {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
-    <link rel="apple-touch-icon" href="/favicon.png" />
+    <!--
+      Favicons. SVG variants are picked by the browser via
+      prefers-color-scheme (Chrome 79+, Firefox 79+, Safari 14+). PNG
+      fallback uses the same media-query pattern. ICO + apple-touch
+      use the light variant as a sensible default since they don't
+      switch on color scheme.
+    -->
+    <link rel="icon" type="image/svg+xml" href="/favicon-light.svg" media="(prefers-color-scheme: light)" />
+    <link rel="icon" type="image/svg+xml" href="/favicon-dark.svg" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" type="image/png" href="/favicon-light.png" media="(prefers-color-scheme: light)" />
+    <link rel="icon" type="image/png" href="/favicon-dark.png" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/favicon-light.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/favicon-light.png" />
+
     <meta name="generator" content={Astro.generator} />
 
     <!-- Auto-discoverable feeds + sitemap -->
