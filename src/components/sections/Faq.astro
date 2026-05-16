@@ -135,22 +135,32 @@ const faqs = [
    * then toggles the clicked one. Animates max-height to the inner's
    * scrollHeight so the transition is exact.
    */
-  document.querySelectorAll<HTMLElement>(".faq-item").forEach((item) => {
+  const items = Array.from(document.querySelectorAll<HTMLElement>(".faq-item"));
+
+  const syncOpenHeights = () => {
+    items.forEach((item) => {
+      if (item.dataset.open !== "true") return;
+      const wrap = item.querySelector<HTMLElement>(".faq-a-wrap");
+      const inner = item.querySelector<HTMLElement>(".faq-a-inner");
+      if (wrap && inner) wrap.style.maxHeight = inner.scrollHeight + "px";
+    });
+  };
+
+  syncOpenHeights();
+  window.addEventListener("resize", syncOpenHeights);
+  if (document.fonts?.ready) document.fonts.ready.then(syncOpenHeights);
+
+  items.forEach((item) => {
     const wrap = item.querySelector<HTMLElement>(".faq-a-wrap");
     const inner = item.querySelector<HTMLElement>(".faq-a-inner");
     const q = item.querySelector<HTMLButtonElement>(".faq-q");
     if (!wrap || !inner || !q) return;
 
-    // If marked open by default in the markup, set initial height
-    if (item.dataset.open === "true") {
-      wrap.style.maxHeight = inner.scrollHeight + "px";
-    }
-
     q.addEventListener("click", () => {
       const isOpen = item.dataset.open === "true";
 
       // Close all others
-      document.querySelectorAll<HTMLElement>(".faq-item").forEach((other) => {
+      items.forEach((other) => {
         if (other === item) return;
         other.dataset.open = "false";
         const otherWrap = other.querySelector<HTMLElement>(".faq-a-wrap");
