@@ -89,14 +89,16 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
       GitHub release & stars fetcher.
       Hydrates: .js-release-version, .js-release-size, .js-release-link[href],
                 .js-release-sha, .js-gh-stars
-      Cached 1h in localStorage. Falls back silently to hardcoded values.
+      Cached 5 minutes in localStorage. Falls back silently to hardcoded values.
     -->
     <script>
       (async function fetchLatestRelease() {
         const REPO = "asantinos/ditto";
         const CACHE_KEY = "ditto:gh-release";
-        const CACHE_VERSION = 2;
-        const TTL_MS = 60 * 60 * 1000;
+        // Bump this whenever stale release data needs to be invalidated for
+        // existing visitors. A short TTL keeps new releases visible quickly.
+        const CACHE_VERSION = 3;
+        const TTL_MS = 5 * 60 * 1000;
 
         function fmtSize(bytes: number | null | undefined): string | null {
           if (!bytes) return null;
