@@ -11,7 +11,7 @@ import SectionTag from "../ui/SectionTag.astro";
 const faqs = [
   {
     q: "Is Ditto really 100% local?",
-    a: "Yes. Ditto bundles Whisper.cpp and runs all transcription on your machine. Your audio is never uploaded anywhere. No telemetry on what you say.",
+    a: "Yes. Whisper transcription, optional Qwen formatting, and transcription history all run and stay on your machine. Your audio is never uploaded, and Ditto sends no telemetry about what you say.",
     open: true,
   },
   {
@@ -32,7 +32,7 @@ const faqs = [
   },
   {
     q: "Can I customize the shortcut?",
-    a: "Yes. You can pick any key combination, and choose between toggle (press to start, press again to stop) or push-to-talk (hold while speaking).",
+    a: "Yes. The default hybrid shortcut is Ctrl + Windows: hold it for push-to-talk or double-press for hands-free. You can also choose a custom shortcut in toggle or push-to-talk mode.",
   },
 ];
 ---

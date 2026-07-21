@@ -14,7 +14,7 @@ Ditto splits its files between two folders:
 | Path | What's there | Removed by |
 |---|---|---|
 | `%LOCALAPPDATA%\Programs\Ditto\` | The app itself: executable, DLLs, app code | Uninstaller |
-| `%APPDATA%\ditto\` | Your data: settings, downloaded models | Manual delete or "Delete all data" |
+| `%APPDATA%\ditto\` | Your data: settings, local history, downloaded models | Manual delete or "Delete all data" |
 
 Uninstalling Ditto removes the program folder but leaves your data. This is intentional — reinstalling preserves your shortcut, theme, downloaded models, etc. To remove everything, see the "Wiping" section below.
 
@@ -27,6 +27,7 @@ Uninstalling Ditto removes the program folder but leaves your data. This is inte
 | `Ditto.exe` | Main executable, ~120 MB |
 | `resources\app.asar` | App code (main, renderer, preload bundles) |
 | `resources\whisper\win32-x64\` | Whisper binary + 11 CUDA DLLs |
+| `resources\formatter\win32-x64\` | Local llama.cpp formatter runtime |
 | `Uninstall Ditto.exe` | NSIS uninstaller |
 | Several `.dll` files at the root | Electron runtime |
 
@@ -42,11 +43,13 @@ The whisper folder accounts for most of the disk usage. The `cublasLt64_12.dll` 
 
 ```
 ditto/
-├── config.json       — your settings
-├── models/           — downloaded Whisper models
+├── config.json          — your settings
+├── ditto-history.json   — up to 100 recent transcriptions
+├── models/              — downloaded Whisper models
 │   ├── ggml-base.bin
 │   ├── ggml-small.bin
 │   └── ...
+├── formatter-models/    — optional Qwen3 writing model
 └── Cache/, Code Cache/, GPUCache/  — Chromium caches (auto-managed)
 ```
 
@@ -54,7 +57,11 @@ What you'd actually care about:
 
 **`config.json`** is your settings file. Plain text JSON, safe to back up or version-control. Open it with any editor to inspect.
 
-**`models/`** is where every model you've downloaded lives. Each `.bin` is between 75 MB and 2.9 GB depending on the model size. To free disk space, delete files here directly and click the refresh button in **Settings → Models**.
+**`models/`** contains downloaded Whisper models. Each `.bin` is between 75 MB and 2.9 GB depending on the model size. Manage them directly from **Settings → Models**.
+
+**`formatter-models/`** contains the optional Qwen3 1.7B model used for smart local formatting. It is about 1.3 GB and can be removed from **Settings → Models**.
+
+**`ditto-history.json`** stores up to 100 recent final transcriptions when history is enabled. Manage it from **Settings → History** rather than editing the JSON directly.
 
 **Caches** are Chromium's standard renderer caches. They auto-manage themselves. Safe to delete if you want — they'll be regenerated.
 
@@ -98,7 +105,7 @@ To completely reset Ditto:
 This:
 
 - Resets every setting to its default.
-- Deletes `%APPDATA%\ditto\models\` (all your downloaded models).
+- Deletes local transcription history and all downloaded Whisper and formatter models.
 - Drops the "start with Windows" registry entry if it was set.
 - Restarts the app from scratch — you'll see the welcome window again.
 
@@ -113,7 +120,9 @@ This:
 | Action | Path |
 |---|---|
 | Edit settings | `%APPDATA%\ditto\config.json` |
+| Inspect local history | `%APPDATA%\ditto\ditto-history.json` |
 | Delete a downloaded model | `%APPDATA%\ditto\models\ggml-<size>.bin` |
-| Open the models folder | Settings → Models → Storage → Open folder |
+| Delete the formatter model | `%APPDATA%\ditto\formatter-models\Qwen3-1.7B-Q4_K_M.gguf` |
+| Open the data folder | Settings → Models → Storage → Open folder |
 | Find the executable | `%LOCALAPPDATA%\Programs\Ditto\Ditto.exe` |
 | Find the uninstaller | `%LOCALAPPDATA%\Programs\Ditto\Uninstall Ditto.exe` |

@@ -3,8 +3,9 @@
  * Two-card block on /download: Windows (active) + macOS (coming soon).
  *
  * Windows card: chrome download button + SHA-256 hash. Both URL and SHA
- * hydrated dynamically by the GitHub fetch in Layout.astro; the
- * hardcoded values here are the fallback if the API is unreachable.
+ * are hydrated dynamically by the GitHub fetch in Layout.astro. Until
+ * GitHub responds, the checksum stays in a neutral loading state so an
+ * older release hash is never presented as the current one.
  *
  * macOS card: disabled, dimmed, "Coming soon" badge. Email signup is
  * handled by the WaitlistForm sibling component.
@@ -12,7 +13,6 @@
 import ChromeButton from "../ui/ChromeButton.astro";
 
 const RELEASES_LATEST = "https://github.com/asantinos/ditto/releases/latest";
-const FALLBACK_SHA = "26d448e2318aee1215e4b3dd05d5ba78e3c4f1ad2a356dea83eeca48dec3619b";
 ---
 
 <div class="download-cards">
@@ -25,7 +25,7 @@ const FALLBACK_SHA = "26d448e2318aee1215e4b3dd05d5ba78e3c4f1ad2a356dea83eeca48de
     </div>
     <div class="download-os-name">Windows</div>
     <div class="download-os-meta">
-      <span class="js-release-version">v1.0.0</span> · <span class="js-release-size">525 MB</span> · Windows 10/11 (64-bit)
+      <span class="js-release-version">v1.1.0</span> · <span class="js-release-size">525 MB</span> · Windows 10/11 (64-bit)
     </div>
     <ChromeButton href={RELEASES_LATEST} external release block>
       <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -40,7 +40,7 @@ const FALLBACK_SHA = "26d448e2318aee1215e4b3dd05d5ba78e3c4f1ad2a356dea83eeca48de
       Download .exe
     </ChromeButton>
     <div class="download-checksum">
-      <strong>SHA-256:</strong> <span class="js-release-sha">{FALLBACK_SHA}</span>
+      <strong>SHA-256:</strong> <span class="js-release-sha">Loading from GitHub…</span>
     </div>
   </div>
 

@@ -2,7 +2,7 @@
 title: Themes & pill
 subtitle: Customizing how the floating pill looks, where it appears, and how it behaves while you work.
 section: Features
-order: 5
+order: 6
 ---
 
 import Callout from "../../components/ui/Callout.astro";
@@ -10,6 +10,8 @@ import Callout from "../../components/ui/Callout.astro";
 ## What the pill is
 
 The pill is the small floating window Ditto uses to show its state. It sits above other windows, follows you across virtual desktops, and stays out of the way until you trigger a recording.
+
+In idle it collapses to a 38×9 px bar. Hovering expands it to show "Ditto" and the current shortcut; clicking the expanded pill starts recording. Recording uses a compact 104×28 px surface with a dedicated cancel button.
 
 Some behavior you should know:
 
@@ -22,7 +24,7 @@ Some behavior you should know:
 
 **Settings → Appearance → Pill theme** offers five looks:
 
-- **Matte** — off-white, soft shadow, voice-reactive bars in front. The default. Inspired by Apple's matte hardware finishes.
+- **Matte** — off-white with compact voice-reactive bars. The default. Inspired by Apple's matte hardware finishes.
 - **Onyx** — dark grey, same bar visualization as Matte but inverted. Pairs well with dark wallpapers and OLED screens.
 - **Aurora** — soft pink–violet–blue gradient with a wave at the bottom that reacts to your voice. Most expressive.
 - **Sunset** — warm orange-to-red gradient, same wave style as Aurora.
@@ -34,10 +36,10 @@ Theme changes apply instantly — you'll see the pill on screen update the momen
 
 While you record, the pill animates in real time based on what your microphone hears. Two visual styles depending on the theme:
 
-- **Matte and Onyx** show 13 vertical bars in front of the pill, like a tiny EQ. Each bar maps to a frequency band; louder voice means taller bars.
+- **Matte and Onyx** show nine vertical bars in front of the pill, like a tiny EQ. Each bar maps to a frequency band from low to high; louder voice means taller bars.
 - **Aurora, Sunset, and Mint** show a wave at the bottom of the pill. Peaks follow your voice. Quieter audio leaves the wave flatter.
 
-Both styles run at 60 fps using Web Audio's AnalyserNode, so the visualization is genuinely real-time, not a fake animation.
+Silero VAD decides when speech is present, RMS controls overall intensity, and frequency analysis shapes the individual bars or wave. This processing is visual only: it never trims or changes the audio sent to Whisper.
 
 <Callout type="tip">
 If the pill doesn't react when you speak, the mic isn't reaching Ditto. Check **Settings → Audio** for the right device and make sure Windows hasn't muted it.
@@ -52,7 +54,7 @@ top-left      top      top-right
 bottom-left   bottom   bottom-right
 ```
 
-The pill is placed inside the work area of the chosen monitor, with a small margin from the edge so it doesn't overlap with the taskbar.
+The pill is placed inside the work area of the chosen monitor, with a small margin from the edge so it doesn't overlap with the taskbar. Bottom positions sit 6 px above the usable screen edge.
 
 This is the **default** position — the pill returns here when:
 

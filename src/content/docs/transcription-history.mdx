@@ -1,0 +1,38 @@
+---
+title: Transcription history
+subtitle: Revisit recent dictations, copy them again, and control what Ditto keeps on your computer.
+section: Features
+order: 3
+---
+
+import Callout from "../../components/ui/Callout.astro";
+
+## How history works
+
+Ditto can keep your **100 most recent successful transcriptions** in **Settings → History**. New entries appear first and include the final text, creation time, Whisper model, language setting, and whether smart formatting was applied.
+
+History stores the text that Ditto actually delivered after optional Qwen formatting. Empty audio and recognized silence markers are never added.
+
+## Working with an entry
+
+From the History panel you can:
+
+- **Copy** an entry back to the clipboard.
+- **Delete** one entry without affecting the others.
+- **Clear all** history entries at once.
+
+Deleting an entry only removes Ditto's local copy. It cannot remove text that was already pasted into another app.
+
+## Turn history off
+
+History is enabled by default. Turn off **Save transcription history** in the History panel if you do not want future transcriptions stored. Existing entries remain available until you delete them or clear the history.
+
+<Callout type="note">
+History is local. It is stored in `%APPDATA%\ditto\ditto-history.json`, is never uploaded, and is removed by **Settings → Advanced → Delete all data**.
+</Callout>
+
+## Privacy details
+
+Only final text and small metadata fields are saved. Audio is never part of the history: temporary WAV files are still deleted immediately after each transcription finishes.
+
+See [Privacy & data](/docs/privacy-and-data) for the complete local-data breakdown.

@@ -6,9 +6,8 @@
  * It's also reused as a visual anchor across the website (hero, themes
  * showcase, download CTA, etc.).
  *
- * Tokens calibrated in the original HTML mockup, ported verbatim. Don't
- * invent new values — width/height base stay 100×44 (idle). To resize,
- * wrap in a container with `transform: scale(N)`.
+ * Mirrors the compact v1.1 pill. Static idle examples use its expanded
+ * hover state so the Ditto label remains visible on the website.
  */
 
 export type PillTheme = "matte" | "onyx" | "aurora" | "sunset" | "mint";
@@ -60,7 +59,7 @@ const gradId = id ? `wave-grad-${id}` : `wave-grad-${Math.random().toString(36).
   </div>
 
   <!-- Bottom wave (visible on aurora/sunset/mint while recording) -->
-  <svg class="wave-bottom" viewBox="0 0 160 32" preserveAspectRatio="none">
+  <svg class="wave-bottom" viewBox="0 0 104 18" preserveAspectRatio="none">
     <defs>
       <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stop-color="var(--wave-color, #5ec2d6)" stop-opacity="0" />
@@ -68,18 +67,19 @@ const gradId = id ? `wave-grad-${id}` : `wave-grad-${Math.random().toString(36).
         <stop offset="100%" stop-color="var(--wave-color, #5ec2d6)" stop-opacity="0.95" />
       </linearGradient>
     </defs>
-    <path class="wave-path" d="M 0 32 L 160 32 Z" fill={`url(#${gradId})`} />
+    <path class="wave-path" d="M 0 18 L 104 18 Z" fill={`url(#${gradId})`} />
   </svg>
 
   <div class="content">
     <span class="ditto-text">Ditto</span>
     <div class="waveform">
-      {Array.from({ length: 13 }).map(() => <span class="wb"></span>)}
+      {Array.from({ length: 9 }).map(() => <span class="wb"></span>)}
     </div>
     <div class="dots-loader">
-      {Array.from({ length: 8 }).map(() => <span></span>)}
+      {Array.from({ length: 3 }).map(() => <span></span>)}
     </div>
   </div>
+  <span class="cancel-recording" aria-hidden="true"></span>
 </div>
 
 <style>
@@ -87,23 +87,23 @@ const gradId = id ? `wave-grad-${id}` : `wave-grad-${Math.random().toString(36).
    * BASE
    * ============================================================ */
   .pill {
-    height: 44px;
-    width: 100px;
-    border-radius: 22px;
+    height: 28px;
+    width: 88px;
+    border-radius: 14px;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    padding: 0 16px;
+    padding: 0 10px;
     user-select: none;
     background: var(--pill-bg);
     box-shadow: var(--pill-shadow);
     transition:
-      width 500ms cubic-bezier(0.32, 0.72, 0.24, 1),
-      border-radius 500ms cubic-bezier(0.32, 0.72, 0.24, 1),
-      background 600ms ease-out,
-      box-shadow 600ms ease-out;
+      width 220ms cubic-bezier(0.32, 0.72, 0.24, 1),
+      border-radius 220ms cubic-bezier(0.32, 0.72, 0.24, 1),
+      background 240ms ease-out,
+      box-shadow 240ms ease-out;
   }
   .pill::before {
     content: "";
@@ -131,9 +131,10 @@ const gradId = id ? `wave-grad-${id}` : `wave-grad-${Math.random().toString(36).
   }
 
   /* States */
-  .pill[data-state="idle"] { width: 100px; }
-  .pill[data-state="recording"] { width: 160px; }
-  .pill[data-state="transcribing"] { width: 44px; border-radius: 50%; }
+  .pill[data-state="idle"] { width: 88px; }
+  .pill[data-state="recording"] { width: 104px; }
+  .pill[data-state="transcribing"] { width: 28px; border-radius: 50%; padding: 0; }
+  .pill[data-state="copied"] { width: 82px; }
 
   /* Flat variant — kills outer shadows, used inline in titles */
   .pill.pill-flat {
@@ -229,11 +230,11 @@ const gradId = id ? `wave-grad-${id}` : `wave-grad-${Math.random().toString(36).
   .wave-bottom {
     position: absolute;
     bottom: 0; left: 0;
-    width: 100%; height: 32px;
+    width: 100%; height: 18px;
     z-index: 2;
     pointer-events: none;
     display: none;
-    border-radius: 0 0 22px 22px;
+    border-radius: 0 0 14px 14px;
     overflow: hidden;
   }
   .pill[data-theme="aurora"][data-state="recording"] .wave-bottom,
@@ -256,7 +257,7 @@ const gradId = id ? `wave-grad-${id}` : `wave-grad-${Math.random().toString(36).
   }
   .ditto-text {
     font-family: var(--font-sans);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     letter-spacing: -0.02em;
     color: var(--emboss-color);
@@ -273,16 +274,16 @@ const gradId = id ? `wave-grad-${id}` : `wave-grad-${Math.random().toString(36).
     display: none;
     align-items: center;
     justify-content: center;
-    gap: 3px;
-    height: 23px;
+    gap: 2px;
+    height: 14px;
   }
   .pill[data-theme="matte"][data-state="recording"] .waveform,
   .pill[data-theme="onyx"][data-state="recording"] .waveform {
     display: flex;
   }
   .wb {
-    width: 3px;
-    height: 19px;
+    width: 2px;
+    height: 12px;
     background: var(--bar-color);
     border-radius: 2px;
     transform-origin: center;
@@ -300,41 +301,54 @@ const gradId = id ? `wave-grad-${id}` : `wave-grad-${Math.random().toString(36).
   .pill[data-state="recording"] .wb:nth-child(7)  { transform: scaleY(calc(0.15 + var(--lvl-6,  0) * 0.85)); }
   .pill[data-state="recording"] .wb:nth-child(8)  { transform: scaleY(calc(0.15 + var(--lvl-7,  0) * 0.85)); }
   .pill[data-state="recording"] .wb:nth-child(9)  { transform: scaleY(calc(0.15 + var(--lvl-8,  0) * 0.85)); }
-  .pill[data-state="recording"] .wb:nth-child(10) { transform: scaleY(calc(0.15 + var(--lvl-9,  0) * 0.85)); }
-  .pill[data-state="recording"] .wb:nth-child(11) { transform: scaleY(calc(0.15 + var(--lvl-10, 0) * 0.85)); }
-  .pill[data-state="recording"] .wb:nth-child(12) { transform: scaleY(calc(0.15 + var(--lvl-11, 0) * 0.85)); }
-  .pill[data-state="recording"] .wb:nth-child(13) { transform: scaleY(calc(0.15 + var(--lvl-12, 0) * 0.85)); }
-
   .dots-loader {
     display: none;
-    position: relative;
-    width: 26px;
-    height: 26px;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
   }
   .pill[data-theme="matte"][data-state="transcribing"] .dots-loader,
   .pill[data-theme="onyx"][data-state="transcribing"] .dots-loader {
-    display: block;
-    animation: rotateLoader 1.2s linear infinite;
+    display: flex;
   }
   .dots-loader span {
-    position: absolute;
-    width: 4px; height: 4px;
+    width: 3px; height: 3px;
     border-radius: 50%;
     background: var(--bar-color);
-    top: 50%; left: 50%;
-    margin: -2px 0 0 -2px;
-    animation: dotPulseLoader 1.2s ease-in-out infinite;
+    animation: dotPulseLoader 900ms ease-in-out infinite;
   }
-  .dots-loader span:nth-child(1) { transform: rotate(0deg)   translateX(10px); animation-delay: -1.05s; }
-  .dots-loader span:nth-child(2) { transform: rotate(45deg)  translateX(10px); animation-delay: -0.9s;  }
-  .dots-loader span:nth-child(3) { transform: rotate(90deg)  translateX(10px); animation-delay: -0.75s; }
-  .dots-loader span:nth-child(4) { transform: rotate(135deg) translateX(10px); animation-delay: -0.6s;  }
-  .dots-loader span:nth-child(5) { transform: rotate(180deg) translateX(10px); animation-delay: -0.45s; }
-  .dots-loader span:nth-child(6) { transform: rotate(225deg) translateX(10px); animation-delay: -0.3s;  }
-  .dots-loader span:nth-child(7) { transform: rotate(270deg) translateX(10px); animation-delay: -0.15s; }
-  .dots-loader span:nth-child(8) { transform: rotate(315deg) translateX(10px); animation-delay: 0s;     }
-  @keyframes rotateLoader { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-  @keyframes dotPulseLoader { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
+  .dots-loader span:nth-child(1) { animation-delay: -300ms; }
+  .dots-loader span:nth-child(2) { animation-delay: -150ms; }
+  @keyframes dotPulseLoader {
+    0%, 100% { opacity: 0.25; transform: translateY(0); }
+    50% { opacity: 1; transform: translateY(-1px); }
+  }
+
+  .cancel-recording {
+    position: absolute;
+    z-index: 12;
+    right: 7px;
+    display: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    color: color-mix(in srgb, var(--bar-color) 58%, transparent);
+    background: color-mix(in srgb, var(--bar-color) 8%, transparent);
+  }
+  .pill[data-state="recording"] .cancel-recording { display: block; }
+  .cancel-recording::before,
+  .cancel-recording::after {
+    content: "";
+    position: absolute;
+    top: 6.25px;
+    left: 3.75px;
+    width: 6.5px;
+    height: 1.25px;
+    border-radius: 1px;
+    background: currentColor;
+  }
+  .cancel-recording::before { transform: rotate(45deg); }
+  .cancel-recording::after { transform: rotate(-45deg); }
 
   /* ============================================================
    * THEMES — set via [data-theme] on the .pill (NOT global)
@@ -445,11 +459,11 @@ const gradId = id ? `wave-grad-${id}` : `wave-grad-${Math.random().toString(36).
   /**
    * Animates the pill's voice-reactive visualization.
    *
-   * For matte/onyx (waveform bars): writes 13 CSS variables (--lvl-0..--lvl-12)
+   * For matte/onyx (waveform bars): writes 9 CSS variables (--lvl-0..--lvl-8)
    * with synthetic pseudo-noise levels. CSS uses them in calc() to scale bars.
    *
    * For aurora/sunset/mint (wave path): rebuilds the SVG path with bezier
-   * curves through the 13 level points, producing a smooth wave that
+   * curves through the 9 level points, producing a smooth wave that
    * animates with the same data.
    *
    * One animation loop per pill on the page. The loop always runs; CSS
@@ -459,9 +473,9 @@ const gradId = id ? `wave-grad-${id}` : `wave-grad-${Math.random().toString(36).
 
   function animatePill(pillEl: HTMLElement) {
     const path = pillEl.querySelector<LiveSVGPathElement>(".wave-path");
-    const W = 160;
-    const H = 32;
-    const N = 13;
+    const W = 104;
+    const H = 18;
+    const N = 9;
 
     function tick(t: number) {
       const tt = t / 1000;

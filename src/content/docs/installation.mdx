@@ -19,7 +19,7 @@ No NVIDIA GPU? Ditto still works on CPU. Transcription will be slower, especiall
 
 ## Download
 
-Get `Ditto-Setup-1.0.0.exe` from the [download page](/download) or directly from [GitHub Releases](https://github.com/asantinos/ditto/releases/latest).
+Get `Ditto-Setup-1.1.0.exe` from the [download page](/download) or directly from [GitHub Releases](https://github.com/asantinos/ditto/releases/latest).
 
 The installer is around 400 MB. Most of that is the bundled CUDA runtime (cuBLAS, cuDNN). The Whisper model is downloaded separately on first launch.
 
@@ -59,6 +59,8 @@ After install, Ditto's files are in two places:
 | Program files (binary, DLLs, app code) | `%LOCALAPPDATA%\Programs\Ditto\` |
 | User data folder (created on first launch) | `%APPDATA%\ditto\` |
 | Whisper models | `%APPDATA%\ditto\models\` |
+| Qwen formatter model | `%APPDATA%\ditto\formatter-models\` |
+| Local transcription history | `%APPDATA%\ditto\ditto-history.json` |
 | Your settings | `%APPDATA%\ditto\config.json` |
 
 Program files are removed when you uninstall. **User data is not** — your settings and downloaded models stay until you delete them manually or use **Settings → Advanced → Delete all data**.
@@ -69,7 +71,7 @@ Ditto does not yet auto-update. To install a newer version:
 
 1. Download the new `Ditto-Setup-X.Y.Z.exe`
 2. Run it (you can keep the old version installed; the installer handles the upgrade)
-3. Your settings and downloaded models are preserved
+3. Your settings, local history, and downloaded models are preserved
 
 <Callout type="note">
 Auto-updates are planned for a future release.

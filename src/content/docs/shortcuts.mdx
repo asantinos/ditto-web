@@ -13,19 +13,20 @@ Out of the box Ditto uses two shortcuts:
 
 | Shortcut | What it does |
 |---|---|
-| <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd> | Start recording, then stop and transcribe |
+| <kbd>Ctrl</kbd>+<kbd>Windows</kbd> | Hold for push-to-talk, double-press for hands-free |
 | <kbd>Esc</kbd> | Cancel the current recording without transcribing |
 
 The recording shortcut is **global** — it works from any app, not just when Ditto has focus. The cancel shortcut is **only active during a recording**; the rest of the time pressing <kbd>Esc</kbd> does nothing for Ditto.
 
 ## How recording works
 
-There are two activation modes available in **Settings → Shortcut → Mode**:
+There are three activation modes in **Settings → Shortcut → Mode**:
 
-- **Toggle** (default): one press starts the recording, a second press ends it and triggers transcription.
-- **Push-to-talk**: hold the shortcut while you speak, release it to stop. Ditto detects release after ~600 ms of inactivity on the combo, so there's a small delay between letting go and the transcription starting.
+- **Hybrid** (default): hold <kbd>Ctrl</kbd>+<kbd>Windows</kbd> while speaking and release to transcribe. Quickly press it twice to lock the same recording hands-free; press it once more to finish.
+- **Toggle**: one press starts the recording, a second press ends it and triggers transcription.
+- **Push-to-talk**: hold a regular shortcut while you speak and release it to stop.
 
-Pick whichever feels more natural for your workflow.
+You can also click the expanded pill to start or stop. A recording started from the pill behaves like hands-free mode, so the next <kbd>Ctrl</kbd>+<kbd>Windows</kbd> press stops it.
 
 ## Change the recording shortcut
 
@@ -34,7 +35,9 @@ Pick whichever feels more natural for your workflow.
 3. Under **Main shortcut → Record / stop**, click **Change**.
 4. Press the new combination. Ditto captures it and re-registers globally on the spot.
 
-The combo must include at least one modifier (<kbd>Ctrl</kbd>, <kbd>Shift</kbd>, <kbd>Alt</kbd>, or the Windows key) plus one regular key. Single-key shortcuts are not allowed for the main shortcut to avoid accidental triggers when typing.
+Hybrid mode specifically uses the modifier-only <kbd>Ctrl</kbd>+<kbd>Windows</kbd> chord. Toggle and push-to-talk shortcuts must include at least one modifier (<kbd>Ctrl</kbd>, <kbd>Shift</kbd>, <kbd>Alt</kbd>, or the Windows key) plus one regular key. Single-key recording shortcuts are not allowed, which avoids accidental triggers while typing.
+
+Switching away from hybrid mode changes an untouched default shortcut to <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd>. Your own custom shortcuts are preserved.
 
 ## Change the cancel shortcut
 

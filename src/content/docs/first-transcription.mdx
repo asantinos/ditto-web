@@ -15,25 +15,28 @@ Two things should be in place from the previous steps:
 - A Whisper model is downloaded. If you skipped the welcome window, open **Settings → Models** and pick one.
 
 <Callout type="tip">
-This walkthrough assumes the default shortcut <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd>. If you changed it, use yours.
+This walkthrough assumes the default hybrid shortcut <kbd>Ctrl</kbd>+<kbd>Windows</kbd>. If you changed it, use yours.
 </Callout>
 
 ## Dictating
 
 1. **Click into a text field.** Anywhere a cursor blinks works: a Slack message, a code editor, an email draft, a search bar. Ditto pastes wherever your cursor is when transcription finishes.
-2. **Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd>.** The pill switches to its recording state. On Matte and Onyx themes it shows voice-driven bars; on Aurora, Sunset, and Mint it shows a wave animation at the bottom that reacts to your voice.
+2. **Hold <kbd>Ctrl</kbd>+<kbd>Windows</kbd>.** The pill switches to its recording state. On Matte and Onyx themes it shows voice-driven bars; on Aurora, Sunset, and Mint it shows a wave at the bottom. Silero VAD keeps the visual response focused on detected speech.
 3. **Talk normally.** Speak at your usual pace. Pauses are fine, Whisper will handle them. Background noise is OK in moderation, especially with the noise filter on.
-4. **Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd> again.** The pill collapses to a small dots loader while Ditto runs the audio through the model.
-5. **Your text is pasted.** Within a second or two (longer for big models or long recordings), the transcription appears in the text field where your cursor was.
+4. **Release the keys.** The pill collapses to a small dots loader while Ditto runs the audio through Whisper and, if enabled, the local Qwen formatter.
+5. **Your text is pasted.** Within a second or two (longer for big models, long recordings, or smart formatting), the final text appears in the field where your cursor was and is added to local history if history is enabled.
+
+To dictate hands-free, quickly press <kbd>Ctrl</kbd>+<kbd>Windows</kbd> twice. Press it once more to finish and transcribe.
 
 ## What each pill state looks like
 
 | State | What you see | Meaning |
 |---|---|---|
-| Idle | Wide pill that reads "Ditto" | Ready, waiting for the shortcut |
+| Idle | Thin bar that expands to "Ditto" on hover | Ready, waiting for the shortcut |
 | Recording | Voice-reactive bars or wave | Capturing audio |
 | Transcribing | Small pill with a row of animated dots | Running Whisper, generating text |
 | Copied | Short pill with a check icon and "Copied!" | Text is in your clipboard but auto-paste is off |
+| Error | Flat micro-pill with a red dot and message | Microphone access or transcription failed |
 
 The "Copied" state only appears if you turned off auto-paste in **Settings → General**. By default Ditto pastes the text for you.
 
@@ -58,7 +61,7 @@ For broader issues, jump to [Troubleshooting](/docs/troubleshooting).
 
 ## A few tips for better results
 
-- **Say punctuation.** Whisper picks up "comma", "period", "question mark" if you say them clearly. Doesn't always work but often enough to be useful.
+- **Let smart formatting handle structure.** When enabled, the local Qwen model can add punctuation, paragraphs and lists and remove filler words without sending text anywhere.
 - **Don't whisper.** A normal speaking voice gives the model the most signal.
 - **Bigger isn't always better.** Base or Small are usually plenty for daily notes. Medium and Large-v3 shine for technical jargon, accents, or noisy environments — but they're slower.
 - **Pick a fixed language if you always speak the same one.** Auto-detect is flexible but adds latency. Setting it explicitly speeds things up and reduces mistakes.

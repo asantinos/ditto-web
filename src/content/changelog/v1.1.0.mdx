@@ -1,0 +1,24 @@
+---
+version: v1.1.0
+date: 2026-07-21
+badge: minor
+title: Smarter dictation, faster control
+added:
+  - "Smart local formatting with Qwen3 1.7B and llama.cpp for punctuation, paragraphs, lists, and filler removal"
+  - "Content-safety validation for formatted text: if the local model drops or changes too much, Ditto keeps the original transcription"
+  - "Hybrid Ctrl + Windows shortcut: hold for push-to-talk, double-press for hands-free, and press again to finish"
+  - "Silero VAD voice detection with frequency-aware bars and waves that react only when speech is detected"
+  - "Status sounds for recording start, hands-free lock, stop, cancel, and completed transcription"
+  - "In-app download and removal of the optional Qwen formatter model"
+  - "Local transcription history in Settings with up to 100 recent entries, one-click copy, individual delete, clear all, and an on/off setting"
+improved:
+  - "Redesigned floating pill with a slimmer idle state, instant shortcut tooltip, click-to-record, dedicated cancel button, and compact error feedback"
+  - "Whisper model management now supports deleting user-downloaded models while protecting the last available transcription model"
+  - "Model storage now reports both Whisper and formatter downloads and opens the shared Ditto data folder"
+  - "Existing users on the original default shortcut are migrated to hybrid mode while custom shortcut choices are preserved"
+  - "Voice visualisation now uses local VAD, RMS intensity, and frequency bands without trimming or changing the audio sent to Whisper"
+fixed:
+  - "Stop and cancel requests are preserved while microphone access is still starting, so quick shortcut or pill actions no longer get lost"
+  - "Whisper silence markers such as [BLANK_AUDIO] and [AUDIO_EN_BLANCO] are no longer copied, pasted, formatted, or counted in usage stats"
+  - "Microphone and transcription failures now return the pill to idle automatically instead of leaving the recording flow stuck"
+---

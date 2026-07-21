@@ -1,6 +1,6 @@
 ---
 title: Models
-subtitle: The Whisper models behind Ditto's transcription, how to pick one, switch between them, and clean up disk space.
+subtitle: Choose a Whisper transcription model, install local smart formatting, and manage the disk space they use.
 section: Features
 order: 2
 ---
@@ -57,9 +57,10 @@ If the model that was active is gone, Ditto falls back to whichever model is sti
 
 ## Where they live
 
-All models live in a single folder:
+Whisper and formatter models use separate folders:
 
-`%APPDATA%\ditto\models\`
+- Whisper: `%APPDATA%\ditto\models\`
+- Qwen formatter: `%APPDATA%\ditto\formatter-models\`
 
 Filenames follow the pattern `ggml-<size>.bin`:
 
@@ -69,11 +70,11 @@ Filenames follow the pattern `ggml-<size>.bin`:
 - `ggml-medium.bin`
 - `ggml-large-v3.bin`
 
-You can open this folder directly from **Settings → Models → Storage → Open folder**.
+**Settings → Models → Storage → Open folder** opens the shared `%APPDATA%\ditto\` data folder.
 
-## Removing a model
+## Removing models
 
-To free disk space, just delete the `.bin` file from the models folder in Explorer. Then click the refresh button in **Settings → Models** so Ditto updates its UI.
+User-downloaded Whisper and Qwen models have a delete button in Settings. Ditto protects the last available Whisper model so transcription cannot be left without a working model. Models supplied with a development build are shown as installed but cannot be removed from the app.
 
 To remove **everything** Ditto stored (settings + all models):
 
@@ -91,3 +92,16 @@ A rough guide:
 - **For older or low-RAM machines:** Tiny. Less accurate but always responsive.
 
 You can always switch later — there's no commitment to your first pick.
+
+## Smart local formatting
+
+Ditto can optionally pass the raw Whisper result through **Qwen3 1.7B**, running locally with llama.cpp. It can:
+
+- Add punctuation and capitalization.
+- Split longer dictation into natural paragraphs.
+- Turn clearly dictated sequences or collections into numbered or bulleted lists.
+- Remove hesitation fillers and abandoned false starts.
+
+Download the Qwen model from **Settings → Models → Local writing AI**. The model is about 1.3 GB and is stored separately in `%APPDATA%\ditto\formatter-models\`.
+
+Enable or disable it under **Settings → Advanced → Smart local formatting**. If the formatter fails, times out, or removes too much content, Ditto automatically keeps the original Whisper transcription. Audio and text never leave the computer during formatting.

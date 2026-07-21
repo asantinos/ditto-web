@@ -3,7 +3,7 @@
  * "How it works" — 3 step cards with cursive Caveat labels and hand-drawn
  * SVG arrows pointing FROM the label TO the card (CLAUDE.md §5.5).
  *
- * Step 1: keyboard mock with Ctrl + Shift + Space pulse animation
+ * Step 1: keyboard mock with Ctrl + Windows pulse animation
  * Step 2: pill in recording state, scaled 1.2 for emphasis
  * Step 3: chat window mock with green-highlighted typed text
  *
@@ -43,13 +43,13 @@ import Pill from "../ui/Pill.astro";
               <div class="key">J</div><div class="key">K</div>
             </div>
             <div class="keys-row">
-              <div class="key wide active keys-pulse" style="animation-delay: 100ms;">Shift</div>
+              <div class="key wide">Shift</div>
               <div class="key">Z</div><div class="key">X</div><div class="key">C</div>
               <div class="key">V</div><div class="key">B</div><div class="key">N</div>
             </div>
             <div class="keys-row" style="transform: translateX(8px);">
               <div class="key wide active keys-pulse">Ctrl</div>
-              <div class="key">
+              <div class="key active keys-pulse" style="animation-delay: 100ms;">
                 <svg viewBox="0 0 12 12" width="8" height="8" fill="currentColor" style="display:block;">
                   <rect x="0" y="0" width="5" height="5" rx="0.5" />
                   <rect x="7" y="0" width="5" height="5" rx="0.5" />
@@ -58,7 +58,7 @@ import Pill from "../ui/Pill.astro";
                 </svg>
               </div>
               <div class="key">Alt</div>
-              <div class="key xwide active keys-pulse" style="animation-delay: 200ms;">Space</div>
+              <div class="key xwide">Space</div>
               <div class="key">Alt</div>
               <div class="key">
                 <svg viewBox="0 0 12 12" width="8" height="8" fill="currentColor" style="display:block;">
@@ -71,7 +71,7 @@ import Pill from "../ui/Pill.astro";
             </div>
           </div>
         </div>
-        <div class="step-foot">From any app. No need to switch windows or click anything.</div>
+        <div class="step-foot">Hold to talk, or double-press to keep recording hands-free.</div>
       </div>
 
       <!-- STEP 2: Speak naturally -->
