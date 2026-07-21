@@ -35,7 +35,7 @@ const themes: { name: string; id: PillTheme }[] = [
         themes.map((t) => (
           <div class="theme-cell" data-theme-cell>
             <div class="theme-pill-stage">
-              <Pill theme={t.id} state="idle" id={`theme-${t.id}`} />
+              <Pill theme={t.id} state="idle" showCancel={false} id={`theme-${t.id}`} />
             </div>
             <div class="theme-cell-name">{t.name}</div>
           </div>

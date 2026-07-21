@@ -23,6 +23,11 @@ interface Props {
    */
   flat?: boolean;
   /**
+   * Controls the recording cancel icon. Marketing examples can hide it
+   * while the product preview keeps the real app control visible.
+   */
+  showCancel?: boolean;
+  /**
    * Stable id used by the wave gradient SVG. Required because each pill
    * needs its own gradient `<defs>` to avoid id collisions when multiple
    * pills render on the same page.
@@ -35,6 +40,7 @@ const {
   theme = "matte",
   state = "idle",
   flat = false,
+  showCancel = true,
   id,
   class: className = "",
 } = Astro.props;
@@ -79,7 +85,7 @@ const gradId = id ? `wave-grad-${id}` : `wave-grad-${Math.random().toString(36).
       {Array.from({ length: 3 }).map(() => <span></span>)}
     </div>
   </div>
-  <span class="cancel-recording" aria-hidden="true"></span>
+  {showCancel && <span class="cancel-recording" aria-hidden="true"></span>}
 </div>
 
 <style>
